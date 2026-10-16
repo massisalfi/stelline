@@ -13,6 +13,7 @@ Web app installabile per iPad: un sistema di token economy gamificato per una fa
 - `src/dati/`: archivio locale (IndexedDB) e backup.
 - `src/interfaccia/`: schermate dei genitori, della configurazione e della bambina.
 - `src/testi/`: tutti i testi in italiano.
+- `risorse/`: icone e suoni originali.
 - `test/`: test automatici.
 
 ## Test

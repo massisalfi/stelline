@@ -1,0 +1,12 @@
+{
+  "name": "stelline",
+  "private": true,
+  "type": "module",
+  "description": "Web app installabile per iPad: token economy gamificata, dati solo sul dispositivo",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

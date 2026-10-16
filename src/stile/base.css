@@ -1,0 +1,81 @@
+/* Stile di base dell'app. Colori e misure stanno qui come variabili, per cambiarli in un punto solo. */
+
+:root {
+  --sfondo: #f6f1e7;
+  --carta: #fffdf8;
+  --testo: #2b2a28;
+  --tenue: #6b665e;
+  --bordo: #ddd4c4;
+  --accento: #2f6f5e;
+  --accento-testo: #ffffff;
+  --stella: #f6c445;
+
+  --raggio: 16px;
+  --tocco-minimo: 44px; /* RNF-08: aree di tocco di almeno 44 punti */
+  --margine: 24px;
+
+  --carattere: -apple-system, system-ui, "Helvetica Neue", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--sfondo);
+  color: var(--testo);
+  font: 20px/1.45 var(--carattere);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;      /* niente zoom con il doppio tocco */
+  overscroll-behavior: none;       /* niente "rimbalzo" della pagina */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea { -webkit-user-select: text; user-select: text; }
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding:
+    max(var(--margine), env(safe-area-inset-top))
+    max(var(--margine), env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(var(--margine), env(safe-area-inset-left));
+}
+
+.schermo { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; }
+
+.schermo-centrato {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+h1 { font-size: 2.4rem; line-height: 1.15; margin: 16px 0 0; }
+
+.logo { width: 160px; height: 160px; border-radius: 36px; }
+
+.testo-grande { font-size: 1.3rem; max-width: 32ch; margin: 0; }
+
+.nota { color: var(--tenue); margin: 16px 0 0; }
+
+.piede {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+  color: var(--tenue);
+  font-size: 0.8rem;
+  padding-top: 16px;
+}
+
+.piede-offline { font-weight: 600; }
+
+[hidden] { display: none !important; }
