@@ -1,7 +1,7 @@
 // Service worker della prova: rete prima, copia locale se offline.
 // Così una versione nuova pubblicata si vede subito, e senza rete la pagina si apre lo stesso.
 
-const CACHE = 'prova-persistenza-v1';
+const CACHE = 'prova-persistenza-v2';
 const FILE = [
   './',
   'index.html',

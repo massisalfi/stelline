@@ -1,7 +1,7 @@
 // Prova tecnica di conservazione dei dati su iPad (requisiti, sezione 13).
 // Usa un archivio con un nome diverso da quello dell'app vera e non contiene dati personali.
 
-const VERSIONE = 1;
+const VERSIONE = 2;
 const NOME_ARCHIVIO = 'prova-persistenza';
 const MEGABYTE = 1024 * 1024;
 const DIMENSIONE_FILE = 5 * MEGABYTE;
