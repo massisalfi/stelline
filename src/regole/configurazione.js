@@ -25,7 +25,7 @@ export function nuovaBozza() {
     giocatrice: {
       nome: '',
       eta: 6,
-      voce: { attiva: true, velocita: 1 },
+      voce: { attiva: true, velocita: 1, tono: 1, id: null },
       suoni: { attivi: true, volume: 70 },
     },
     tipiGiorno: tipiProposti(),

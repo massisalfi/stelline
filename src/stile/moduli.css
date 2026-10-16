@@ -57,6 +57,16 @@
   font: inherit;
   width: 100%;
 }
+.campo { min-width: 0; }
+.campo input[type="text"], .campo input[type="date"], .campo input[type="time"], .campo select { height: 48px; }
+.campo input[type="date"], .campo input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+.campo input::-webkit-date-and-time-value { text-align: left; }
 .campo-riga select { width: auto; min-width: 180px; }
 .campo input:focus, .campo select:focus { outline: 3px solid color-mix(in srgb, var(--accento) 40%, transparent); outline-offset: 1px; }
 .con-errore input, .con-errore select { border-color: var(--errore); background: var(--errore-sfondo); }
@@ -122,16 +132,26 @@
 .campione { width: 24px; height: 24px; border-radius: 50%; display: block; }
 .riga-eccezione {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
-  gap: 12px;
-  align-items: end;
-  padding-bottom: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "nome nome tipo"
+    "dal  al   elimina";
+  gap: 12px 16px;
+  align-items: start;
+  padding: 16px 0;
   border-bottom: 1px solid var(--bordo);
 }
+.riga-eccezione .area-nome { grid-area: nome; }
+.riga-eccezione .area-tipo { grid-area: tipo; }
+.riga-eccezione .area-dal { grid-area: dal; }
+.riga-eccezione .area-al { grid-area: al; }
+.riga-eccezione .area-elimina { grid-area: elimina; align-self: end; justify-self: end; }
 .riga-campi { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 900px) {
-  .riga-eccezione { grid-template-columns: 1fr 1fr; }
-  .riga-eccezione > :first-child { grid-column: 1 / -1; }
+@media (max-width: 700px) {
+  .riga-eccezione {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "nome nome" "tipo tipo" "dal al" "elimina elimina";
+  }
 }
 
 /* Procedura di configurazione */

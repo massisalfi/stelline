@@ -77,7 +77,7 @@ export const passoCalendario = {
               });
             }, { ridisegna: true });
           }),
-        ]),
+        ], t.tipiSpiegazione),
         sezione(t.settimana, GIORNI.map((giorno) => selettore({
           etichetta: testi.comune.giorno(giorno),
           valore: bozza.calendario.settimana[giorno],
@@ -87,29 +87,33 @@ export const passoCalendario = {
         })).map((campo) => {
           campo.classList.add('campo-riga');
           return campo;
-        })),
+        }), t.settimanaSpiegazione),
       ]),
       sezione(t.eccezioni, [
         ...(bozza.calendario.eccezioni.length === 0 ? [crea('p', { class: 'nota' }, t.nessunaEccezione)] : []),
         ...bozza.calendario.eccezioni.map((eccezione, indice) => crea('div', { class: 'riga-eccezione' }, [
           campoTesto({
+            area: 'nome',
             etichetta: t.nomeEccezione,
             valore: eccezione.nome ?? '',
             alCambio: (valore) => ctx.modifica((b) => { b.calendario.eccezioni[indice].nome = valore; }),
           }),
           campoData({
+            area: 'dal',
             etichetta: t.dal,
             valore: eccezione.dal,
             errore: ctx.errore('eccezione-dal-mancante', indice),
             alCambio: (valore) => ctx.modifica((b) => { b.calendario.eccezioni[indice].dal = valore; }),
           }),
           campoData({
+            area: 'al',
             etichetta: t.al,
             valore: eccezione.al ?? '',
             errore: ctx.errore('eccezione-al-prima-di-dal', indice) ?? ctx.errore('eccezione-al-non-valido', indice),
             alCambio: (valore) => ctx.modifica((b) => { b.calendario.eccezioni[indice].al = valore; }),
           }),
           selettore({
+            area: 'tipo',
             etichetta: t.tipo,
             valore: eccezione.tipo,
             opzioni: opzioniTipi(bozza),
@@ -118,7 +122,7 @@ export const passoCalendario = {
           }),
           pulsante(testi.comune.elimina, () => {
             ctx.modifica((b) => { b.calendario.eccezioni.splice(indice, 1); }, { ridisegna: true });
-          }, { classe: 'leggero' }),
+          }, { classe: 'leggero area-elimina' }),
         ])),
         pulsante(`+ ${t.aggiungiEccezione}`, () => {
           ctx.modifica((b) => {
