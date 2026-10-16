@@ -20,6 +20,7 @@ const FILE = [
   'src/regole/giorno.js',
   'src/regole/portafoglio.js',
   'src/regole/registrazione.js',
+  'src/regole/riscatto.js',
   'src/stile/base.css',
   'src/testi/it.js',
   'src/versione.js',
