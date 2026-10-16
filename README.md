@@ -16,6 +16,16 @@ Web app installabile per iPad: un sistema di token economy gamificato per una fa
 - `risorse/`: icone e suoni originali.
 - `test/`: test automatici.
 
+## Copia offline
+
+Ogni file dell'app deve essere nell'elenco della copia offline in `sw.js`. Dopo aver aggiunto o tolto un file:
+
+```bash
+node strumenti/elenco-offline.js
+```
+
+Un test controlla che l'elenco sia completo.
+
 ## Test
 
 Servono Node.js 20 o successivo. Dalla cartella del progetto:

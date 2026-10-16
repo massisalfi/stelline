@@ -98,3 +98,64 @@ export function sezione(titolo, figli, spiegazione) {
     ...figli,
   ]);
 }
+
+export function areaTesto({ etichetta, valore = '', alCambio, errore, segnaposto, spiegazione, righe = 3, maxlength = 400 }) {
+  const id = nuovoId();
+  const area = crea('textarea', {
+    id, rows: righe, placeholder: segnaposto, maxlength, 'aria-invalid': errore ? 'true' : null,
+  });
+  area.value = valore;
+  area.addEventListener('input', () => alCambio(area.value));
+  return crea('div', { class: classeCampo(errore) }, [
+    crea('label', { for: id }, etichetta),
+    spiegazione ? crea('p', { class: 'nota' }, spiegazione) : null,
+    area,
+    messaggioErrore(errore),
+  ]);
+}
+
+// Numero con i pulsanti − e +, comodo con il dito.
+export function contatoreNumerico({ etichetta, valore, minimo, massimo, passo = 1, formato = String, alCambio, errore }) {
+  const uscita = crea('output', { class: 'contatore-valore', 'aria-live': 'polite' }, formato(valore));
+  let attuale = valore;
+  const cambia = (delta) => {
+    attuale = Math.min(massimo, Math.max(minimo, attuale + delta));
+    uscita.textContent = formato(attuale);
+    alCambio(attuale);
+  };
+  return crea('div', { class: classeCampo(errore) }, [
+    etichetta ? crea('span', { class: 'etichetta' }, etichetta) : null,
+    crea('div', { class: 'contatore' }, [
+      pulsante('−', () => cambia(-passo), { etichetta: `${etichetta ?? ''} meno`.trim() }),
+      uscita,
+      pulsante('+', () => cambia(passo), { etichetta: `${etichetta ?? ''} più`.trim() }),
+    ]),
+    messaggioErrore(errore),
+  ]);
+}
+
+// Scelta tra poche opzioni con pulsanti affiancati (uno solo attivo).
+// opzioni: [{ valore, testo }]
+export function sceltaPulsanti({ etichetta, valore, opzioni, alCambio, errore, spiegazione }) {
+  const gruppo = crea('div', { class: 'segmenti', role: 'radiogroup', 'aria-label': etichetta });
+  const testoSpiegazione = (v) => (typeof spiegazione === 'function' ? spiegazione(v) : spiegazione);
+  const nota = spiegazione ? crea('p', { class: 'nota' }, testoSpiegazione(valore)) : null;
+  const disegna = (attivo) => gruppo.replaceChildren(...opzioni.map((o) => crea('button', {
+    type: 'button',
+    role: 'radio',
+    class: o.valore === attivo ? 'segmento attivo' : 'segmento',
+    'aria-checked': String(o.valore === attivo),
+    onclick: () => {
+      disegna(o.valore);
+      if (nota) nota.textContent = testoSpiegazione(o.valore);
+      alCambio(o.valore);
+    },
+  }, o.testo)));
+  disegna(valore);
+  return crea('div', { class: classeCampo(errore) }, [
+    crea('span', { class: 'etichetta' }, etichetta),
+    gruppo,
+    nota,
+    messaggioErrore(errore),
+  ]);
+}

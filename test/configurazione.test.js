@@ -117,3 +117,69 @@ test('passo 3: un nuovo tipo di giorno ha un identificativo mai usato', () => {
   const id = nuovoIdTipo(bozza);
   assert.equal(bozza.tipiGiorno.some((t) => t.id === id), false);
 });
+
+import {
+  nuovoComportamento, controllaComportamento, controllaComportamenti, allineaAiTipi,
+} from '../src/regole/configurazione.js';
+import { importaModello, MODELLO_ESEMPIO } from '../src/modello-esempio.js';
+import { verificaProporzione, verificaCatalogo } from '../src/regole/proporzione.js';
+import { ICONE_COMPORTAMENTI } from '../src/risorse/icone-comportamenti.js';
+import { existsSync } from 'node:fs';
+
+test('CT-01: al primo avvio nessun comportamento è precaricato', () => {
+  assert.deepEqual(nuovaBozza().comportamenti, []);
+  assert.deepEqual(codici(controllaComportamenti(nuovaBozza())), ['nessun-comportamento']);
+});
+
+test('passo 4: un comportamento nuovo va completato prima di andare avanti', () => {
+  const bozza = nuovaBozza();
+  const ca = nuovoComportamento(bozza.tipiGiorno, 'ca-1');
+  assert.deepEqual(codici(controllaComportamento(ca, bozza.tipiGiorno)),
+    ['ca-nome-mancante', 'ca-icona-mancante', 'ca-frase-mancante', 'ca-definizione-mancante']);
+  Object.assign(ca, { nome: 'Prova', icona: 'giochi', frase: 'Hai fatto la prova.', definizione: 'Conta se…' });
+  assert.deepEqual(controllaComportamento(ca, bozza.tipiGiorno), []);
+  bozza.comportamenti = [ca, { ...ca, id: 'ca-2', nome: '' }];
+  assert.deepEqual(controllaComportamenti(bozza), [{ codice: 'ca-incompleto', indice: 1 }]);
+});
+
+test('passo 4: stelline intere da 1 a 10 nei giorni previsti, almeno un giorno, valori sensati', () => {
+  const bozza = nuovaBozza();
+  const ca = { ...nuovoComportamento(bozza.tipiGiorno, 'ca-1'), nome: 'P', icona: 'giochi', frase: 'F', definizione: 'D' };
+  ca.perTipo.scuola.stelline = 0;
+  ca.massimoSolleciti = -1;
+  ca.timer = 0;
+  ca.laurea = { percentuale: 120, settimane: 3 };
+  assert.deepEqual(codici(controllaComportamento(ca, bozza.tipiGiorno)),
+    ['ca-stelline', 'ca-solleciti', 'ca-timer', 'ca-laurea']);
+  const mai = { ...ca, massimoSolleciti: 3, timer: null, laurea: { percentuale: 80, settimane: 3 } };
+  mai.perTipo = Object.fromEntries(bozza.tipiGiorno.map((t) => [t.id, { previsto: false, stelline: 1, automatica: false }]));
+  assert.deepEqual(codici(controllaComportamento(mai, bozza.tipiGiorno)), ['ca-nessun-giorno']);
+});
+
+test('i comportamenti seguono i tipi di giorno aggiunti o eliminati', () => {
+  const bozza = nuovaBozza();
+  const ca = { ...nuovoComportamento(bozza.tipiGiorno, 'ca-1'), automaticaSeDomaniNon: ['scuola', 'vacanza'] };
+  const tipi = [...bozza.tipiGiorno.filter((t) => t.id !== 'vacanza'), { id: 'nonni', nome: 'Nonni', colore: '#000' }];
+  const allineato = allineaAiTipi(ca, tipi);
+  assert.deepEqual(Object.keys(allineato.perTipo).sort(), ['festivo', 'nonni', 'scuola', 'weekend']);
+  assert.equal(allineato.perTipo.nonni.previsto, false);
+  assert.deepEqual(allineato.automaticaSeDomaniNon, ['scuola']);
+});
+
+test('modello d\'esempio: si importa solo su richiesta, completo, con la proporzione 70/30 rispettata', () => {
+  const bozza = importaModello(nuovaBozza());
+  assert.equal(bozza.comportamenti.length, MODELLO_ESEMPIO.length);
+  assert.deepEqual(controllaComportamenti(bozza), []);
+  assert.equal(verificaProporzione(bozza.comportamenti).ok, true);
+  assert.equal(verificaCatalogo(bozza.comportamenti).ok, true);
+  assert.equal(new Set(bozza.comportamenti.map((c) => c.id)).size, bozza.comportamenti.length);
+  // Importarlo due volte non crea doppioni.
+  assert.equal(importaModello(bozza).comportamenti.length, MODELLO_ESEMPIO.length);
+});
+
+test('ogni icona della libreria ha il suo file', () => {
+  for (const { id } of ICONE_COMPORTAMENTI) {
+    assert.ok(existsSync(new URL(`../risorse/icone/comportamenti/${id}.svg`, import.meta.url)), id);
+  }
+  for (const c of MODELLO_ESEMPIO) assert.ok(ICONE_COMPORTAMENTI.some((i) => i.id === c.icona), c.nome);
+});

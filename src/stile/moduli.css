@@ -224,3 +224,171 @@
 .pin-tasto:active { background: var(--bordo); }
 .pin-azioni { display: flex; gap: 12px; width: 100%; justify-content: space-between; margin-top: 6px; }
 .pin-azioni .pulsante { flex: 1; }
+
+/* Aree di testo */
+.campo textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--bordo);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--testo);
+  font: inherit;
+  width: 100%;
+  resize: vertical;
+  min-height: 72px;
+}
+.con-errore textarea { border-color: var(--errore); background: var(--errore-sfondo); }
+.campo .nota { margin: 0; font-size: 0.88rem; }
+
+/* Contatore numerico */
+.contatore-valore { font-size: 1.15rem; font-weight: 700; min-width: 6ch; text-align: center; color: var(--testo); }
+.contatore .pulsante { width: 52px; padding: 0; font-size: 1.4rem; }
+
+/* Scelta a pulsanti affiancati */
+.segmenti { display: flex; gap: 0; border: 1px solid var(--bordo); border-radius: 12px; overflow: hidden; background: #fff; width: fit-content; max-width: 100%; }
+.segmenti.a-capo { flex-wrap: wrap; gap: 8px; border: 0; background: transparent; overflow: visible; }
+.segmento {
+  min-height: var(--tocco-minimo);
+  padding: 8px 16px;
+  border: 0;
+  border-right: 1px solid var(--bordo);
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  color: var(--testo);
+  cursor: pointer;
+}
+.segmento:last-child { border-right: 0; }
+.segmento.attivo { background: var(--accento); color: var(--accento-testo); }
+.segmenti.a-capo .segmento { border: 1px solid var(--bordo); border-radius: 10px; background: #fff; }
+.segmenti.a-capo .segmento.attivo { background: var(--accento); color: var(--accento-testo); border-color: var(--accento); }
+
+/* Elenco dei comportamenti (passo 4) */
+.elenco-ca { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.scheda-ca {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  background: var(--carta);
+  font: inherit;
+  color: var(--testo);
+  cursor: pointer;
+}
+.scheda-ca.incompleta { border-style: dashed; }
+.scheda-ca.con-errore { border-color: var(--errore); background: var(--errore-sfondo); }
+.scheda-ca-testo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.scheda-ca-testo .nota { margin: 0; font-size: 0.85rem; }
+.etichette { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8rem; color: var(--tenue); }
+.etichette > span { background: var(--sfondo); border-radius: 999px; padding: 2px 10px; }
+.etichetta-tipo.scelta { background: #e7e0f3 !important; color: #5b4690; }
+.etichetta-tipo.catalogo { background: #eef0f2 !important; }
+.etichetta-tipo.fisso { background: #dfeee9 !important; color: var(--accento); }
+.icona-vuota { width: 56px; height: 56px; border-radius: 12px; border: 2px dashed var(--bordo); }
+.freccia { font-size: 1.6rem; color: var(--tenue); }
+.scheda.vuoto { color: var(--tenue); text-align: center; padding: 32px; }
+.riga-pulsanti { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Scelta dell'icona */
+.griglia-icone { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.scelta-icona {
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+}
+.scelta-icona img { width: 100%; height: auto; max-width: 52px; }
+.scelta-icona.attiva { border-color: var(--accento); background: #dfeee9; }
+
+/* Giorni del comportamento */
+.riga-giorno {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bordo);
+}
+.riga-giorno.spenta .nome-tipo { color: var(--tenue); }
+.riga-giorno .campo { gap: 2px; }
+.riga-giorno .campo-riga { gap: 10px; }
+.riga-giorno .etichetta { font-size: 0.8rem; }
+.nome-tipo { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+@media (max-width: 900px) {
+  .riga-giorno { grid-template-columns: 1fr 1fr; }
+  .riga-giorno .nome-tipo { grid-column: 1 / -1; }
+}
+
+/* Passo 5 */
+.riga-scelta { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--bordo); }
+.riga-scelta .campo .etichetta { font-size: 1rem; }
+.esito { margin: 0; font-weight: 600; }
+.esito.ok { color: var(--ok); }
+.esito.ko { color: var(--errore); }
+.esito.avviso { color: #8a5a00; }
+
+/* Scheda a tutto schermo */
+body.bloccato { overflow: hidden; }
+.scheda-sfondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 42, 40, .45);
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+}
+.scheda-finestra {
+  background: var(--sfondo);
+  border-radius: 24px;
+  width: min(1100px, 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+}
+.scheda-finestra:focus, .conferma-finestra:focus { outline: none; }
+.scheda-testata { padding: 18px 24px 10px; }
+.scheda-testata h2 { margin: 0; font-size: 1.5rem; }
+.scheda-corpo { flex: 1; overflow-y: auto; padding: 8px 24px 24px; display: flex; flex-direction: column; gap: 20px; -webkit-overflow-scrolling: touch; }
+.scheda-azioni {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--bordo);
+  background: var(--carta);
+}
+.azioni-destra { display: flex; gap: 12px; }
+.scheda-azioni .pulsante { min-height: 52px; min-width: 120px; }
+.pulsante.pericolo { color: var(--errore); }
+
+/* Richiesta di conferma */
+.conferma-finestra {
+  background: var(--carta);
+  border-radius: 24px;
+  padding: 28px;
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+}
+.conferma-finestra h2 { margin: 0; font-size: 1.35rem; }
+.conferma-finestra p { margin: 0; color: var(--tenue); }
+.conferma-azioni { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px; }
+.conferma-azioni .pulsante { min-height: 52px; }
+
+/* Note di spiegazione dentro le schede: stesso aspetto ovunque */
+.scheda .nota { margin: 0; font-size: 0.9rem; color: var(--tenue); }
+.scheda.vuoto { font-size: 1rem; }

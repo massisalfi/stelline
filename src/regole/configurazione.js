@@ -34,6 +34,7 @@ export function nuovaBozza() {
       eccezioni: [],
     },
     revisione: { giorno: 7, ora: '18:00' },
+    comportamenti: [],
   };
 }
 
@@ -113,4 +114,87 @@ export function nuovoIdTipo(bozza) {
   let n = bozza.tipiGiorno.length + 1;
   while (bozza.tipiGiorno.some((t) => t.id === `tipo-${n}`)) n++;
   return `tipo-${n}`;
+}
+
+// Passo 4: comportamenti attesi (CA). Ogni campo segue la sezione 4 dei requisiti.
+//   tipo:   'fisso' | 'scelta' | 'catalogo'        stato: 'attivo' | 'catalogo' | 'laureato'
+//   perTipo: per ogni tipo di giorno { previsto, stelline, automatica }
+//   automaticaSeDomaniNon: tipi di giorno; se domani non è di uno di questi, la stellina è automatica
+export const MOMENTI = ['mattina', 'pomeriggio', 'sera'];
+
+export function statoDaTipo(tipo) {
+  return tipo === 'catalogo' ? 'catalogo' : 'attivo';
+}
+
+export function nuovoComportamento(tipiGiorno, id) {
+  return {
+    id,
+    nome: '',
+    icona: null,
+    frase: '',
+    definizione: '',
+    tipo: 'fisso',
+    stato: 'attivo',
+    momento: 'mattina',
+    validita: 'oggi',
+    perTipo: Object.fromEntries(tipiGiorno.map((t) => [t.id, { previsto: true, stelline: 1, automatica: false }])),
+    automaticaSeDomaniNon: [],
+    massimoSolleciti: 3,
+    timer: null,
+    laurea: { percentuale: 80, settimane: 3 },
+  };
+}
+
+// Le regole per tipo di giorno restano allineate ai tipi esistenti (aggiunti o eliminati al passo 3).
+export function allineaAiTipi(comportamento, tipiGiorno) {
+  const ids = new Set(tipiGiorno.map((t) => t.id));
+  return {
+    ...comportamento,
+    perTipo: Object.fromEntries(tipiGiorno.map((t) => [
+      t.id, comportamento.perTipo?.[t.id] ?? { previsto: false, stelline: 1, automatica: false },
+    ])),
+    automaticaSeDomaniNon: (comportamento.automaticaSeDomaniNon ?? []).filter((id) => ids.has(id)),
+  };
+}
+
+const intero = (n, min, max) => Number.isInteger(n) && n >= min && n <= max;
+
+export function controllaComportamento(c, tipiGiorno) {
+  const errori = [];
+  if (vuoto(c.nome)) errori.push({ codice: 'ca-nome-mancante' });
+  if (!c.icona) errori.push({ codice: 'ca-icona-mancante' });
+  if (vuoto(c.frase)) errori.push({ codice: 'ca-frase-mancante' });
+  if (vuoto(c.definizione)) errori.push({ codice: 'ca-definizione-mancante' });
+  if (!['fisso', 'scelta', 'catalogo'].includes(c.tipo)) errori.push({ codice: 'ca-tipo' });
+  if (!MOMENTI.includes(c.momento)) errori.push({ codice: 'ca-momento' });
+  if (!['oggi', 'domani'].includes(c.validita)) errori.push({ codice: 'ca-validita' });
+
+  let inUnGiorno = false;
+  for (const t of tipiGiorno) {
+    const r = c.perTipo?.[t.id];
+    if (!r || !(r.previsto || r.automatica)) continue;
+    inUnGiorno = true;
+    if (!intero(r.stelline, 1, 10)) errori.push({ codice: 'ca-stelline', tipo: t.id });
+  }
+  if (!inUnGiorno) errori.push({ codice: 'ca-nessun-giorno' });
+
+  if (!intero(c.massimoSolleciti, 0, 10)) errori.push({ codice: 'ca-solleciti' });
+  if (c.timer != null && !intero(c.timer, 1, 120)) errori.push({ codice: 'ca-timer' });
+  if (!intero(c.laurea?.percentuale, 50, 100) || !intero(c.laurea?.settimane, 1, 12)) {
+    errori.push({ codice: 'ca-laurea' });
+  }
+  return errori;
+}
+
+// Passo 4: almeno un comportamento, e ognuno completo. L'indice dice quale CA è da correggere.
+export function controllaComportamenti(bozza) {
+  if (bozza.comportamenti.length === 0) return [{ codice: 'nessun-comportamento' }];
+  return bozza.comportamenti.flatMap((c, indice) =>
+    controllaComportamento(c, bozza.tipiGiorno).length ? [{ codice: 'ca-incompleto', indice }] : []);
+}
+
+export function nuovoIdComportamento(bozza) {
+  let n = bozza.comportamenti.length + 1;
+  while (bozza.comportamenti.some((c) => c.id === `ca-${n}`)) n++;
+  return `ca-${n}`;
 }

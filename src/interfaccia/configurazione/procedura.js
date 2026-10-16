@@ -6,6 +6,8 @@ import { pulsante } from '../componenti/moduli.js';
 import { passoGenitori } from './passo-genitori.js';
 import { passoGiocatrice } from './passo-giocatrice.js';
 import { passoCalendario } from './passo-calendario.js';
+import { passoComportamenti } from './passo-comportamenti.js';
+import { passoScelta } from './passo-scelta.js';
 import { testi } from '../../testi/it.js';
 
 export const TOTALE_PASSI = 11;
@@ -15,9 +17,11 @@ const PASSI = {
   1: passoGenitori,
   2: passoGiocatrice,
   3: passoCalendario,
+  4: passoComportamenti,
+  5: passoScelta,
 };
 // Dove trovare in testi.configurazione la descrizione di ciascun passo.
-const TESTI_PASSI = { 1: 'genitori', 2: 'giocatrice', 3: 'calendario' };
+const TESTI_PASSI = { 1: 'genitori', 2: 'giocatrice', 3: 'calendario', 4: 'comportamenti', 5: 'scelta' };
 
 // I passi non ancora costruiti: si vedono, ma non si può andare oltre.
 const passoInCostruzione = {
