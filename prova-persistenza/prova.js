@@ -8,7 +8,7 @@
 // Ogni archivio tiene anche il proprio diario delle aperture; il service worker annota
 // gli aggiornamenti nell'archivio "testo".
 
-const VERSIONE = 3;
+const VERSIONE = 4;
 const NOME_ARCHIVIO = 'prova-persistenza';
 const NOME_TESTO = 'prova-persistenza-testo';
 const CHIAVE_SEMPLICE = 'prova-persistenza-semplice';

@@ -2,7 +2,7 @@
 // Così una versione nuova pubblicata si vede subito, e senza rete la pagina si apre lo stesso.
 // Dalla versione 3 annota installazione e attivazione nell'archivio "testo", per il diario.
 
-const VERSIONE = 3;
+const VERSIONE = 4;
 const CACHE = `prova-persistenza-v${VERSIONE}`;
 const NOME_TESTO = 'prova-persistenza-testo';
 const FILE = [
