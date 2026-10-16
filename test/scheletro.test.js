@@ -30,7 +30,7 @@ function elencoServiceWorker() {
 test('ogni file dell\'app è nella copia offline del service worker', () => {
   const elenco = new Set(elencoServiceWorker());
   const mancanti = FILE_APP.filter((f) => !elenco.has(f));
-  assert.deepEqual(mancanti, [], `File da aggiungere a FILE in sw.js: ${mancanti.join(', ')}`);
+  assert.deepEqual(mancanti, [], `File da aggiungere alla copia offline (eseguite: node strumenti/elenco-offline.js): ${mancanti.join(', ')}`);
 });
 
 test('ogni file elencato nel service worker esiste', () => {
