@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: blob:; connect-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Prova dati">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#f6f1e7">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icona-180.png">
+  <link rel="icon" href="icona-180.png">
+  <link rel="stylesheet" href="stile.css">
+  <title>Prova dei dati</title>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Prova di conservazione dei dati</h1>
+      <p class="sotto">Pagina di prova temporanea. Non contiene dati personali. <span id="versione"></span></p>
+    </header>
+
+    <section id="esito" class="riquadro esito" aria-live="polite">
+      <p class="grande" id="esito-titolo">Controllo in corso…</p>
+      <p id="esito-dettaglio"></p>
+    </section>
+
+    <section class="riquadro">
+      <h2>Stato dell'archivio</h2>
+      <dl id="stato"></dl>
+    </section>
+
+    <section class="riquadro">
+      <h2>Azioni</h2>
+      <div class="pulsanti">
+        <button id="salva">Salva il dato di prova</button>
+        <button id="persistente">Chiedi conservazione persistente</button>
+        <button id="esporta">Esporta su File</button>
+        <label class="pulsante" for="importa">Importa da File</label>
+        <input id="importa" type="file" accept=".json,application/json" hidden>
+      </div>
+      <p id="messaggio" class="messaggio" aria-live="polite"></p>
+    </section>
+
+    <section class="riquadro">
+      <h2>Aperture registrate</h2>
+      <ol id="aperture" reversed></ol>
+    </section>
+
+    <section class="riquadro pericolo">
+      <h2>Fine della prova</h2>
+      <p>Cancella tutti i dati di questa pagina. Poi eliminate l'icona dalla schermata Home.</p>
+      <button id="cancella" class="rosso">Cancella i dati della prova</button>
+    </section>
+  </main>
+  <script type="module" src="prova.js"></script>
+</body>
+</html>

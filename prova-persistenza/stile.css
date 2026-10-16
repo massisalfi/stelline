@@ -1,0 +1,74 @@
+:root {
+  --sfondo: #f6f1e7;
+  --carta: #fffdf8;
+  --testo: #2b2a28;
+  --tenue: #6b665e;
+  --bordo: #ddd4c4;
+  --accento: #2f6f5e;
+  --ok: #2f7a3a;
+  --ok-sfondo: #e6f3e4;
+  --no: #9a3b1f;
+  --no-sfondo: #f8e6df;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--sfondo);
+  color: var(--testo);
+  font: 18px/1.45 -apple-system, system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: max(16px, env(safe-area-inset-top)) 16px 48px;
+}
+
+h1 { font-size: 1.6rem; margin: 8px 0 4px; }
+h2 { font-size: 1.15rem; margin: 0 0 12px; }
+.sotto { color: var(--tenue); margin: 0 0 16px; }
+
+.riquadro {
+  background: var(--carta);
+  border: 1px solid var(--bordo);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.esito .grande { font-size: 1.5rem; font-weight: 700; margin: 0 0 4px; }
+.esito p { margin: 0; }
+.esito.si { background: var(--ok-sfondo); border-color: var(--ok); }
+.esito.no { background: var(--no-sfondo); border-color: var(--no); }
+
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+dt { color: var(--tenue); }
+dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.pulsanti { display: flex; flex-wrap: wrap; gap: 12px; }
+
+button, .pulsante {
+  min-height: 52px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--accento);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+button.rosso { background: var(--no); }
+button:disabled { opacity: .5; }
+
+.messaggio { min-height: 1.5em; margin: 12px 0 0; color: var(--tenue); }
+
+ol { margin: 0; padding-left: 1.6em; max-height: 240px; overflow: auto; }
+
+.pericolo { border-color: var(--no); }
