@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'">
+  <title>Verifica dell'archivio</title>
+  <style>
+    body { font: 16px/1.4 -apple-system, system-ui, sans-serif; margin: 24px; background: #f6f1e7; color: #2b2a28; }
+    .ok { color: #2f7a3a; } .ko { color: #9a3b1f; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Verifica dell'archivio (IndexedDB)</h1>
+  <p>Usa un archivio di prova separato, che viene cancellato alla fine. Non tocca i dati dell'app.</p>
+  <p id="riepilogo">In corso…</p>
+  <ol id="risultati"></ol>
+  <script type="module" src="archivio.js"></script>
+</body>
+</html>

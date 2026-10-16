@@ -24,6 +24,8 @@ Servono Node.js 20 o successivo. Dalla cartella del progetto:
 node --test
 ```
 
+Le verifiche che richiedono il browser (archivio IndexedDB) si eseguono aprendo `verifiche/archivio.html` dal server locale: usano un archivio separato, cancellato alla fine.
+
 ## Licenza
 
 Codice e risorse grafiche originali. Eventuali librerie di terzi sono incluse con il loro file di licenza.

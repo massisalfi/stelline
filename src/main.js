@@ -40,9 +40,12 @@ async function avviaServiceWorker() {
   let toccato = false;
   window.addEventListener('pointerdown', () => { toccato = true; }, { once: true, capture: true });
 
+  // Al primo avvio la copia offline si prepara senza ricaricare la pagina:
+  // si ricarica solo quando una versione nuova sostituisce quella in uso.
+  const aggiornamento = Boolean(navigator.serviceWorker.controller);
   let ricaricata = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (ricaricata) return;
+    if (!aggiornamento || ricaricata) return;
     ricaricata = true;
     window.location.reload();
   });
