@@ -24,6 +24,8 @@ Servono Node.js 20 o successivo. Dalla cartella del progetto:
 node --test
 ```
 
+Sul Mac l'app si prova da un server locale (`localhost`). Lì la copia offline è spenta, così si vede subito il codice nuovo; si accende aggiungendo `?offline` all'indirizzo. Con `?safari` si vede la schermata che compare quando l'app è aperta in Safari invece che dall'icona.
+
 Le verifiche che richiedono il browser (archivio IndexedDB) si eseguono aprendo `verifiche/archivio.html` dal server locale: usano un archivio separato, cancellato alla fine.
 
 ## Licenza
