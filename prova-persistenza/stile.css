@@ -72,3 +72,9 @@ button:disabled { opacity: .5; }
 ol { margin: 0; padding-left: 1.6em; max-height: 240px; overflow: auto; }
 
 .pericolo { border-color: var(--no); }
+
+.archivi { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 4px; }
+.archivi .segno { display: inline-block; width: 1.4em; font-weight: 700; }
+.archivi .si .segno { color: var(--ok); }
+.archivi .no .segno { color: var(--no); }
+.evento { color: var(--tenue); font-style: italic; }

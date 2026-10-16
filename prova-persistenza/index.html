@@ -25,7 +25,7 @@
 
     <section id="esito" class="riquadro esito" aria-live="polite">
       <p class="grande" id="esito-titolo">Controllo in corso…</p>
-      <p id="esito-dettaglio"></p>
+      <ul id="esito-archivi" class="archivi"></ul>
     </section>
 
     <section class="riquadro">
@@ -40,13 +40,13 @@
         <button id="persistente">Chiedi conservazione persistente</button>
         <button id="esporta">Esporta su File</button>
         <label class="pulsante" for="importa">Importa da File</label>
-        <input id="importa" type="file" accept=".json,application/json" hidden>
+        <input id="importa" type="file" hidden>
       </div>
       <p id="messaggio" class="messaggio" aria-live="polite"></p>
     </section>
 
     <section class="riquadro">
-      <h2>Aperture registrate</h2>
+      <h2>Diario delle aperture e degli aggiornamenti</h2>
       <ol id="aperture" reversed></ol>
     </section>
 
