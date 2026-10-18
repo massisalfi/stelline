@@ -137,7 +137,8 @@ export function contatoreNumerico({ etichetta, valore, minimo, massimo, passo = 
 // Scelta tra poche opzioni con pulsanti affiancati (uno solo attivo).
 // opzioni: [{ valore, testo }]
 export function sceltaPulsanti({ etichetta, valore, opzioni, alCambio, errore, spiegazione }) {
-  const gruppo = crea('div', { class: 'segmenti', role: 'radiogroup', 'aria-label': etichetta });
+  // Con più di tre opzioni i pulsanti vanno a capo, così nessuno esce dal riquadro.
+  const gruppo = crea('div', { class: opzioni.length > 3 ? 'segmenti a-capo' : 'segmenti', role: 'radiogroup', 'aria-label': etichetta });
   const testoSpiegazione = (v) => (typeof spiegazione === 'function' ? spiegazione(v) : spiegazione);
   const nota = spiegazione ? crea('p', { class: 'nota' }, testoSpiegazione(valore)) : null;
   const disegna = (attivo) => gruppo.replaceChildren(...opzioni.map((o) => crea('button', {

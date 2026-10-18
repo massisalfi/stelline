@@ -8,7 +8,7 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import { VERSIONE } from '../src/versione.js';
 import { nuovaBozza } from '../src/regole/configurazione.js';
-import { importaModello } from '../src/modello-esempio.js';
+import { importaModello, importaListino } from '../src/modello-esempio.js';
 import { creaImpronta } from '../src/sicurezza/pin.js';
 
 const destinazione = new URL(`../test/compatibilita/${VERSIONE}.json`, import.meta.url);
@@ -38,7 +38,13 @@ bozza.calendario.eccezioni = [
 ];
 bozza.revisione = { giorno: 7, ora: '19:30' };
 importaModello(bozza);
-bozza.passo = 5;
+importaListino(bozza);
+bozza.economia.categorie.push({ id: 'categoria-3', nome: 'Film', limite: 60, tolleranza: 70 });
+bozza.economia.confermaRiscatto = 'schermo';
+bozza.stagioni.boss = { tipo: 'comportamento', comportamento: bozza.comportamenti[0].id, giorni: 4, percentuale: 80 };
+bozza.sorprese.contenuti.creature = false;
+bozza.alert.a8.giorni = 10;
+bozza.passo = 10;
 
 const fotografia = {
   versione: VERSIONE,

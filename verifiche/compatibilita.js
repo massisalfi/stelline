@@ -5,6 +5,7 @@
 import { completaBozza } from '../src/regole/configurazione.js';
 import { creaProcedura, PASSI, TOTALE_PASSI } from '../src/interfaccia/configurazione/procedura.js';
 import { apriSchedaComportamento } from '../src/interfaccia/configurazione/scheda-comportamento.js';
+import { apriSchedaPremio } from '../src/interfaccia/configurazione/scheda-premio.js';
 
 const risultati = [];
 const palco = document.getElementById('palco');
@@ -46,6 +47,17 @@ for (const nome of await elencoFotografie()) {
     prova(`${fotografia.versione}: scheda del comportamento «${ca.nome}»`, () => {
       apriSchedaComportamento({
         comportamento: ca, tipiGiorno: bozza.tipiGiorno, voce: {}, nuovo: false,
+        alSalvataggio: () => {}, alEliminazione: () => {},
+      });
+      document.querySelector('.scheda-sfondo')?.remove();
+      document.body.classList.remove('bloccato');
+    });
+  }
+
+  for (const premio of bozza.premi) {
+    prova(`${fotografia.versione}: scheda del premio «${premio.nome}»`, () => {
+      apriSchedaPremio({
+        premio, categorie: bozza.economia.categorie, nuovo: false,
         alSalvataggio: () => {}, alEliminazione: () => {},
       });
       document.querySelector('.scheda-sfondo')?.remove();

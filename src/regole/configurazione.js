@@ -2,6 +2,7 @@
 // Restituisce solo codici: i testi stanno in src/testi/it.js.
 
 import { valido as giornoValido } from './date.js';
+import { economiaProposta, stagioniProposte, sorpreseProposte, alertProposti } from './configurazione-gioco.js';
 
 export const COLORI_TIPI = ['#2f6f5e', '#c9852c', '#9a3b1f', '#4a6fa5', '#7a5c99', '#5c7a3a'];
 
@@ -35,6 +36,11 @@ export function nuovaBozza() {
     },
     revisione: { giorno: 7, ora: '18:00' },
     comportamenti: [],
+    economia: economiaProposta(),
+    premi: [],
+    stagioni: stagioniProposte(),
+    sorprese: sorpreseProposte(),
+    alert: alertProposti(),
   };
 }
 

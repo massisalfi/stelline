@@ -136,3 +136,38 @@ export function importaModello(bozza) {
   }
   return bozza;
 }
+
+// Listino d'esempio, facoltativo e inventato. Rispetta i principi del gioco: nessun premio è
+// affetto, attenzione, tempo con i genitori, cibo o un bisogno primario.
+// 5 premi di livello (uno per settimana di una stagione proposta), un premio del boss, uno raro.
+export const LISTINO_ESEMPIO = [
+  { nome: 'Adesivo da scegliere', icona: 'stella', famiglia: 'tangibile', modalita: 'stelline', costo: 3, euro: 0.5 },
+  { nome: 'Corona del giorno', icona: 'corona', famiglia: 'status', modalita: 'livello', riutilizzabile: true },
+  { nome: 'Scegliere il gioco del pomeriggio', icona: 'biglietto', famiglia: 'potere', modalita: 'livello' },
+  { nome: 'Videogioco per 30 minuti', icona: 'joystick', famiglia: 'accesso', modalita: 'livello', categoria: 'videogiochi', minuti: 30 },
+  { nome: 'Pennarelli nuovi', icona: 'pennello', famiglia: 'tangibile', modalita: 'livello', euro: 5 },
+  { nome: 'Scegliere la musica in macchina', icona: 'musica', famiglia: 'potere', modalita: 'livello' },
+  { nome: 'Puzzle nuovo', icona: 'regalo', famiglia: 'tangibile', modalita: 'boss', euro: 12 },
+  { nome: 'Palloncini in camera', icona: 'palloncino', famiglia: 'emotivo', modalita: 'raro', ogniStagioni: 2, euro: 4 },
+];
+
+const PREMIO_BASE = {
+  famiglia: 'tangibile', modalita: 'stelline', costo: 5, ogniStagioni: 2,
+  categoria: null, minuti: null, riutilizzabile: false, euro: null,
+};
+
+// Aggiunge i premi d'esempio che non ci sono già (stesso nome). Un premio di schermo d'esempio
+// entra solo se la sua categoria esiste nella configurazione della famiglia.
+export function importaListino(bozza) {
+  const nomi = new Set(bozza.premi.map((p) => p.nome.trim().toLowerCase()));
+  const categorie = new Set(bozza.economia.categorie.map((c) => c.id));
+  let n = bozza.premi.length;
+  for (const esempio of LISTINO_ESEMPIO) {
+    if (nomi.has(esempio.nome.toLowerCase())) continue;
+    if (esempio.categoria && !categorie.has(esempio.categoria)) continue;
+    let id;
+    do { id = `premio-${++n}`; } while (bozza.premi.some((p) => p.id === id));
+    bozza.premi.push({ ...PREMIO_BASE, ...structuredClone(esempio), id });
+  }
+  return bozza;
+}
