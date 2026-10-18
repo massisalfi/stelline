@@ -183,3 +183,23 @@ test('ogni icona della libreria ha il suo file', () => {
   }
   for (const c of MODELLO_ESEMPIO) assert.ok(ICONE_COMPORTAMENTI.some((i) => i.id === c.icona), c.nome);
 });
+
+import { completaBozza } from '../src/regole/configurazione.js';
+
+test('una bozza salvata con una versione precedente si completa senza perdere i dati', () => {
+  // Bozza come la salvava la 0.2.x: senza comportamenti, voce senza tono e senza scelta.
+  const vecchia = nuovaBozza();
+  delete vecchia.comportamenti;
+  vecchia.giocatrice.voce = { attiva: false, velocita: 0.8 };
+  vecchia.passo = 4;
+  vecchia.genitori[0].nome = 'Genitore A';
+  vecchia.tipiGiorno = vecchia.tipiGiorno.slice(0, 2);
+  const nuova = completaBozza(vecchia);
+  assert.deepEqual(nuova.comportamenti, []);
+  assert.deepEqual(nuova.giocatrice.voce, { attiva: false, velocita: 0.8, tono: 1, id: null });
+  assert.equal(nuova.passo, 4);
+  assert.equal(nuova.genitori[0].nome, 'Genitore A');
+  assert.equal(nuova.tipiGiorno.length, 2);
+  // Una bozza già completa non cambia.
+  assert.deepEqual(completaBozza(nuova), nuova);
+});

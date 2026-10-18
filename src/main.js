@@ -7,7 +7,7 @@ import { schermataBenvenuto } from './interfaccia/benvenuto.js';
 import { schermataApriDallIcona } from './interfaccia/apri-dall-icona.js';
 import { creaProcedura, CHIAVE_BOZZA } from './interfaccia/configurazione/procedura.js';
 import { apriArchivio } from './dati/archivio.js';
-import { nuovaBozza } from './regole/configurazione.js';
+import { nuovaBozza, completaBozza } from './regole/configurazione.js';
 
 const radice = document.getElementById('app');
 
@@ -95,15 +95,31 @@ async function avvia() {
   const fase = (await archivio.leggiStato('fase')) ?? 'configurazione';
 
   if (fase === 'configurazione') {
-    const bozza = await archivio.leggiStato(CHIAVE_BOZZA);
+    const salvata = await archivio.leggiStato(CHIAVE_BOZZA);
+    const bozza = salvata ? completaBozza(salvata) : null;
     mostra(schermataBenvenuto({
       bozza,
-      alInizio: () => mostra(creaProcedura({ archivio, bozza: bozza ?? nuovaBozza() })),
+      alInizio: () => {
+        try {
+          mostra(creaProcedura({ archivio, bozza: bozza ?? nuovaBozza() }));
+        } catch (errore) {
+          mostraErrore(errore);
+        }
+      },
     }));
   }
 }
 
+// Se qualcosa va storto lo si dice, invece di lasciare lo schermo fermo.
+function mostraErrore(errore) {
+  mostra(crea('main', { class: 'schermo schermo-centrato' }, [
+    crea('h1', {}, testi.stato.erroreTitolo),
+    crea('p', { class: 'testo-grande' }, testi.stato.erroreSpiegazione),
+    crea('p', { class: 'nota' }, String(errore?.message ?? errore)),
+  ]));
+}
+window.addEventListener('error', (evento) => mostraErrore(evento.error ?? evento.message));
+window.addEventListener('unhandledrejection', (evento) => mostraErrore(evento.reason));
+
 avviaServiceWorker().catch(() => {});
-avvia().catch((errore) => {
-  radice.replaceChildren(crea('main', { class: 'schermo schermo-centrato' }, crea('p', {}, String(errore))));
-});
+avvia().catch(mostraErrore);

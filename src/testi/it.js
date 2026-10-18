@@ -235,5 +235,7 @@ export const testi = {
   stato: {
     offline: 'Senza connessione: tutto funziona lo stesso.',
     aggiornamento: 'Aggiornamento in corso…',
+    erroreTitolo: 'Qualcosa non ha funzionato',
+    erroreSpiegazione: 'I dati salvati sono al sicuro. Chiudete l\'app e riapritela; se il problema resta, segnalate il messaggio qui sotto.',
   },
 };

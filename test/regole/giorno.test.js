@@ -89,7 +89,7 @@ test('RN-02: un CA senza regole per quel tipo di giorno non è previsto', () => 
   assert.equal(statoNelGiorno(pastelli, LUNEDI, festa), 'non previsto');
 });
 
-test('RN-02 e CT-21: in pausa nessun CA è previsto e non arrivano stelline automatiche', () => {
+test('RN-02 e CT-21: in pausa nessun CA è previsto', () => {
   const pause = [{ dal: LUNEDI, al: '2026-10-14' }];
   assert.equal(inPausa('2026-10-13', pause), true);
   assert.equal(inPausa('2026-10-15', pause), false);

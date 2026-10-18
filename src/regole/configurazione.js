@@ -198,3 +198,22 @@ export function nuovoIdComportamento(bozza) {
   while (bozza.comportamenti.some((c) => c.id === `ca-${n}`)) n++;
   return `ca-${n}`;
 }
+
+// Una bozza salvata con una versione precedente dell'app può non avere i campi aggiunti dopo
+// (ad esempio l'elenco dei comportamenti, arrivato con la 0.3.0). Si completano con i valori
+// proposti, senza toccare ciò che c'è già. Gli elenchi esistenti restano come sono.
+export function completaBozza(bozza) {
+  const completa = (valore, predefinito) => {
+    if (valore === undefined) return structuredClone(predefinito);
+    if (Array.isArray(predefinito) || predefinito === null || typeof predefinito !== 'object'
+      || valore === null || typeof valore !== 'object' || Array.isArray(valore)) {
+      return valore;
+    }
+    const risultato = { ...valore };
+    for (const [chiave, pred] of Object.entries(predefinito)) risultato[chiave] = completa(valore[chiave], pred);
+    return risultato;
+  };
+  const risultato = completa(bozza, nuovaBozza());
+  risultato.comportamenti = risultato.comportamenti.map((c) => allineaAiTipi(c, risultato.tipiGiorno));
+  return risultato;
+}

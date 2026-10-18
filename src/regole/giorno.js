@@ -35,7 +35,8 @@ export function inPausa(giorno, pause = []) {
 //   'previsto'     → i genitori lo registrano;
 //   'automatico'   → la stellina arriva senza esecuzione (RN-05);
 //   'non previsto' → quel giorno non c'è.
-// In pausa nessun CA è previsto e non arrivano stelline automatiche (RF-G09: il gioco è congelato).
+// In pausa nessun CA è previsto (RF-G09). Le stelline automatiche in pausa arrivano a giorni
+// alterni: lo decide automatiche.js, che valuta lo stato senza la pausa.
 export function statoNelGiorno(comportamento, giorno, calendario, pause = []) {
   if (comportamento.stato !== 'attivo' || inPausa(giorno, pause)) return 'non previsto';
   const regola = comportamento.perTipo?.[tipoDelGiorno(giorno, calendario)];
