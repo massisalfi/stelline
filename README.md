@@ -26,6 +26,16 @@ node strumenti/elenco-offline.js
 
 Un test controlla che l'elenco sia completo.
 
+## Compatibilità dei dati
+
+Ogni nuova versione deve aprire i dati salvati da tutte le versioni precedenti. In `test/compatibilita/` c'è una fotografia dei dati salvati da ogni versione pubblicata (contenuti inventati), che non si modifica mai. Prima di ogni pubblicazione:
+
+1. aumentare la versione in `src/versione.js` e `sw.js`;
+2. `node strumenti/fotografia-dati.js` (fotografia della nuova versione);
+3. `node strumenti/elenco-offline.js`;
+4. `node --test` (tutti i test, compresi quelli di compatibilità);
+5. aprire `verifiche/compatibilita.html` dal server locale: ogni schermata viene disegnata con i dati di ogni versione.
+
 ## Test
 
 Servono Node.js 20 o successivo. Dalla cartella del progetto:

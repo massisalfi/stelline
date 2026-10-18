@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; object-src 'none'">
+  <title>Verifica di compatibilità</title>
+  <base href="../">
+  <link rel="stylesheet" href="src/stile/base.css">
+  <link rel="stylesheet" href="src/stile/moduli.css">
+  <style>
+    #rapporto { font: 16px/1.4 -apple-system, system-ui, sans-serif; margin: 24px; }
+    .ok { color: #2f7a3a; } .ko { color: #9a3b1f; font-weight: 700; }
+    #palco { position: absolute; left: -10000px; width: 1180px; }
+  </style>
+</head>
+<body>
+  <div id="rapporto">
+    <h1>Verifica di compatibilità dei dati (RNF-16)</h1>
+    <p>Disegna ogni schermata della configurazione con i dati salvati da ogni versione pubblicata. Non tocca l'archivio dell'app.</p>
+    <p id="riepilogo">In corso…</p>
+    <ol id="risultati"></ol>
+  </div>
+  <div id="palco"></div>
+  <script type="module" src="verifiche/compatibilita.js"></script>
+</body>
+</html>

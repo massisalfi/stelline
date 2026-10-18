@@ -1,0 +1,99 @@
+{
+  "versione": "0.2.1",
+  "descrizione": "Dati salvati dalla versione 0.2.1 (codice originale, salvataggio 283563e), con contenuti inventati.",
+  "stato": {
+    "bozzaConfigurazione": {
+      "passo": 4,
+      "genitori": [
+        {
+          "id": "genitore-1",
+          "nome": "Genitore di prova A",
+          "pin": {
+            "impronta": "c0ee7c2c22d6b5a3c328dfbf706cf3d26ff32c23fcdd8af8eae1aacdbabb8db0",
+            "sale": "ff8b2841992c680fe38d90fe5c41858a",
+            "iterazioni": 100000
+          }
+        },
+        {
+          "id": "genitore-2",
+          "nome": "Genitore di prova B",
+          "pin": {
+            "impronta": "a8a9dcf30d44e294842af9e99c8ed8daf2056af39d3cc6a0dc81ac576d7fe2f8",
+            "sale": "f27e5eee326731060ca1feeee2f90078",
+            "iterazioni": 100000
+          }
+        }
+      ],
+      "giocatrice": {
+        "nome": "Giocatrice di prova",
+        "eta": 7,
+        "voce": {
+          "attiva": true,
+          "velocita": 0.9,
+          "tono": 1.3,
+          "id": null
+        },
+        "suoni": {
+          "attivi": true,
+          "volume": 60
+        }
+      },
+      "tipiGiorno": [
+        {
+          "id": "scuola",
+          "nome": "Scuola",
+          "colore": "#2f6f5e"
+        },
+        {
+          "id": "weekend",
+          "nome": "Weekend",
+          "colore": "#c9852c"
+        },
+        {
+          "id": "festivo",
+          "nome": "Festivo",
+          "colore": "#9a3b1f"
+        },
+        {
+          "id": "vacanza",
+          "nome": "Vacanze",
+          "colore": "#4a6fa5"
+        },
+        {
+          "id": "tipo-5",
+          "nome": "Giorno dai nonni",
+          "colore": "#5c7a3a"
+        }
+      ],
+      "calendario": {
+        "settimana": {
+          "1": "scuola",
+          "2": "scuola",
+          "3": "scuola",
+          "4": "scuola",
+          "5": "scuola",
+          "6": "tipo-5",
+          "7": "weekend"
+        },
+        "eccezioni": [
+          {
+            "nome": "Vacanze di Natale",
+            "dal": "2026-12-23",
+            "al": "2027-01-06",
+            "tipo": "vacanza"
+          },
+          {
+            "nome": "Ponte",
+            "dal": "2026-12-08",
+            "al": "",
+            "tipo": "festivo"
+          }
+        ]
+      },
+      "revisione": {
+        "giorno": 7,
+        "ora": "19:30"
+      }
+    }
+  }
+}

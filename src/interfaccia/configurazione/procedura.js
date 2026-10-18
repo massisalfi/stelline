@@ -13,7 +13,7 @@ import { testi } from '../../testi/it.js';
 export const TOTALE_PASSI = 11;
 export const CHIAVE_BOZZA = 'bozzaConfigurazione';
 
-const PASSI = {
+export const PASSI = {
   1: passoGenitori,
   2: passoGiocatrice,
   3: passoCalendario,
@@ -35,18 +35,27 @@ export function creaProcedura({ archivio, bozza }) {
   let errori = [];
   let attesa = null;
 
+  // Un salvataggio che non riesce (ad esempio mentre l'app si chiude) non deve bloccare nulla:
+  // la bozza resta in memoria e si salva alla modifica successiva.
   const salva = () => {
     clearTimeout(attesa);
-    return archivio.scriviStato(CHIAVE_BOZZA, bozza);
+    return archivio.scriviStato(CHIAVE_BOZZA, bozza).catch(() => {});
   };
   const salvaTraPoco = () => {
     clearTimeout(attesa);
     attesa = setTimeout(salva, 300);
   };
-  // Se l'app va in secondo piano mentre si scrive, si salva subito.
-  document.addEventListener('visibilitychange', () => {
+  // Se l'app va in secondo piano mentre si scrive, si salva subito. Quando questa schermata
+  // non c'è più, l'ascolto si toglie: non deve mai salvare una bozza ormai vecchia.
+  const inSecondoPiano = () => {
+    if (!schermo.isConnected) {
+      clearTimeout(attesa);
+      document.removeEventListener('visibilitychange', inSecondoPiano);
+      return;
+    }
     if (document.visibilityState === 'hidden') salva();
-  });
+  };
+  document.addEventListener('visibilitychange', inSecondoPiano);
 
   const ctx = {
     bozza,

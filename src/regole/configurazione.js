@@ -199,21 +199,29 @@ export function nuovoIdComportamento(bozza) {
   return `ca-${n}`;
 }
 
-// Una bozza salvata con una versione precedente dell'app può non avere i campi aggiunti dopo
-// (ad esempio l'elenco dei comportamenti, arrivato con la 0.3.0). Si completano con i valori
-// proposti, senza toccare ciò che c'è già. Gli elenchi esistenti restano come sono.
+// RNF-16 Compatibilità: ogni versione apre i dati salvati da tutte le versioni precedenti.
+// Una bozza salvata prima può non avere i campi aggiunti dopo (ad esempio l'elenco dei
+// comportamenti, arrivato con la 0.3.0). Si completano con i valori proposti, senza toccare
+// ciò che c'è già. Gli elenchi restano come sono; i singoli comportamenti si completano a loro volta.
+function completa(valore, predefinito) {
+  if (valore === undefined) return structuredClone(predefinito);
+  if (Array.isArray(predefinito) || predefinito === null || typeof predefinito !== 'object'
+    || valore === null || typeof valore !== 'object' || Array.isArray(valore)) {
+    return valore;
+  }
+  const risultato = { ...valore };
+  for (const [chiave, pred] of Object.entries(predefinito)) risultato[chiave] = completa(valore[chiave], pred);
+  return risultato;
+}
+
+export function completaComportamento(comportamento, tipiGiorno) {
+  // perTipo si completa a parte: per i tipi di giorno nuovi il CA parte "non previsto".
+  const { perTipo, ...predefiniti } = nuovoComportamento(tipiGiorno, comportamento.id);
+  return allineaAiTipi(completa(comportamento, predefiniti), tipiGiorno);
+}
+
 export function completaBozza(bozza) {
-  const completa = (valore, predefinito) => {
-    if (valore === undefined) return structuredClone(predefinito);
-    if (Array.isArray(predefinito) || predefinito === null || typeof predefinito !== 'object'
-      || valore === null || typeof valore !== 'object' || Array.isArray(valore)) {
-      return valore;
-    }
-    const risultato = { ...valore };
-    for (const [chiave, pred] of Object.entries(predefinito)) risultato[chiave] = completa(valore[chiave], pred);
-    return risultato;
-  };
   const risultato = completa(bozza, nuovaBozza());
-  risultato.comportamenti = risultato.comportamenti.map((c) => allineaAiTipi(c, risultato.tipiGiorno));
+  risultato.comportamenti = risultato.comportamenti.map((c) => completaComportamento(c, risultato.tipiGiorno));
   return risultato;
 }
