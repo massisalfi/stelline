@@ -3,7 +3,7 @@
 // Restituisce solo codici e numeri: i testi stanno in src/testi/it.js (RNF-10).
 //
 // Parti della configurazione usate qui:
-//   genitori:     [{ id, nome, pinImpronta }]
+//   genitori:     [{ id, nome, pin: { impronta, sale, iterazioni } }]
 //   calendario:   { settimana, eccezioni }
 //   comportamenti (vedi giorno.js)
 //   economia:     { conversione: { stelline, minuti, categoria }, categorie, tettoTotale }
@@ -38,7 +38,7 @@ export function valida(config) {
   const genitori = config.genitori ?? [];
   if (genitori.length === 0) errori.push({ codice: 'nessun-genitore' });
   for (const g of genitori) {
-    if (!g.pinImpronta) errori.push({ codice: 'genitore-senza-pin', genitore: g.nome });
+    if (!g.pin?.impronta) errori.push({ codice: 'genitore-senza-pin', genitore: g.nome });
   }
 
   // Errore: il numero di CA a scelta non è il 30% dei CA attivi (RN-14).

@@ -7,6 +7,8 @@ import { schermataBenvenuto } from './interfaccia/benvenuto.js';
 import { schermataApriDallIcona } from './interfaccia/apri-dall-icona.js';
 import { creaProcedura, CHIAVE_BOZZA } from './interfaccia/configurazione/procedura.js';
 import { apriArchivio } from './dati/archivio.js';
+import { avviaSettimana0 } from './dati/avvio.js';
+import { schermataSettimana0 } from './interfaccia/settimana0.js';
 import { nuovaBozza, completaBozza } from './regole/configurazione.js';
 
 const radice = document.getElementById('app');
@@ -101,12 +103,25 @@ async function avvia() {
       bozza,
       alInizio: () => {
         try {
-          mostra(creaProcedura({ archivio, bozza: bozza ?? nuovaBozza() }));
+          mostra(creaProcedura({
+            archivio,
+            bozza: bozza ?? nuovaBozza(),
+            alAvvio: async (completa) => {
+              const { inizio } = await avviaSettimana0(archivio, completa);
+              window.scrollTo({ top: 0 });
+              mostra(schermataSettimana0({ inizio }));
+            },
+          }));
         } catch (errore) {
           mostraErrore(errore);
         }
       },
     }));
+    return;
+  }
+
+  if (fase === 'settimana0') {
+    mostra(schermataSettimana0({ inizio: await archivio.leggiStato('inizioSettimana0') }));
   }
 }
 

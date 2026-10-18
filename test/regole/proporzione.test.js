@@ -29,7 +29,7 @@ function elenco(fissi, aScelta, catalogo = 0) {
 
 function configurazione(comportamenti, altro = {}) {
   return {
-    genitori: [{ id: 'g1', nome: 'Genitore A', pinImpronta: 'x' }, { id: 'g2', nome: 'Genitore B', pinImpronta: 'y' }],
+    genitori: [{ id: 'g1', nome: 'Genitore A', pin: { impronta: 'x' } }, { id: 'g2', nome: 'Genitore B', pin: { impronta: 'y' } }],
     calendario,
     comportamenti,
     economia: {
@@ -88,7 +88,7 @@ test('scelta reale: il catalogo deve offrire almeno due CA in più degli slot', 
 
 test('validazione: un genitore senza PIN blocca il salvataggio', () => {
   const config = configurazione(elenco(7, 3, 2), {
-    genitori: [{ id: 'g1', nome: 'Genitore A', pinImpronta: 'x' }, { id: 'g2', nome: 'Genitore B' }],
+    genitori: [{ id: 'g1', nome: 'Genitore A', pin: { impronta: 'x' } }, { id: 'g2', nome: 'Genitore B' }],
   });
   const esito = valida(config);
   assert.equal(esito.valida, false);

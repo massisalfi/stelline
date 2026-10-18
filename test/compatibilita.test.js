@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { VERSIONE } from '../src/versione.js';
 import {
-  completaBozza, nuovaBozza, nuovoComportamento,
+  completaBozza, completaContenuto, FASI, nuovaBozza, nuovoComportamento,
   controllaGenitori, controllaGiocatrice, controllaCalendario, controllaComportamenti,
 } from '../src/regole/configurazione.js';
 import { verificaProporzione, verificaCatalogo } from '../src/regole/proporzione.js';
@@ -86,5 +86,31 @@ for (const fotografia of fotografie) {
     valida({ ...b, economia: {}, premi: [], stagioni: {} });
     // Riaprire dati già aperti non cambia nulla.
     assert.deepEqual(completaBozza(structuredClone(b)), b);
+  });
+}
+
+// Dati salvati dopo "Avvia la settimana 0" (dalla versione 0.5.0 in poi).
+for (const fotografia of fotografie.filter((f) => f.avviata)) {
+  const { stato, configurazioni } = fotografia.avviata;
+
+  test(`${fotografia.versione} (avviata): fase e data di inizio si leggono`, () => {
+    assert.ok(FASI.includes(stato.fase), `fase sconosciuta: ${stato.fase}`);
+    assert.match(stato.inizioSettimana0, /^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  test(`${fotografia.versione} (avviata): ogni versione della configurazione si apre senza perdere nulla`, () => {
+    assert.ok(configurazioni.length >= 1);
+    const { passo, ...modello } = nuovaBozza();
+    for (const v of configurazioni) {
+      assert.ok(Number.isInteger(v.numero) && v.validaDal && v.autore, `versione ${v.numero} incompleta`);
+      const aperta = completaContenuto(structuredClone(v.contenuto));
+      stessaForma(aperta, modello, `configurazione ${v.numero}`);
+      nienteDiPerso(v.contenuto, aperta, `configurazione ${v.numero}`);
+      for (const ca of aperta.comportamenti) {
+        const { perTipo, ...modelloCA } = nuovoComportamento(aperta.tipiGiorno, ca.id);
+        stessaForma(ca, modelloCA, `configurazione ${v.numero}, comportamento ${ca.id}`);
+      }
+      assert.equal(valida(aperta).valida, true, `configurazione ${v.numero} non più valida`);
+    }
   });
 }

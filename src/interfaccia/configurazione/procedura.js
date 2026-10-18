@@ -15,8 +15,10 @@ import { passoSorprese } from './passo-sorprese.js';
 import { passoAlert } from './passo-alert.js';
 import { testi } from '../../testi/it.js';
 
-export const TOTALE_PASSI = 11;
-export const CHIAVE_BOZZA = 'bozzaConfigurazione';
+import { TOTALE_PASSI, CHIAVE_BOZZA } from './costanti.js';
+import { passoRiepilogo } from './passo-riepilogo.js';
+
+export { TOTALE_PASSI, CHIAVE_BOZZA };
 
 export const PASSI = {
   1: passoGenitori,
@@ -29,11 +31,12 @@ export const PASSI = {
   8: passoStagioni,
   9: passoSorprese,
   10: passoAlert,
+  11: passoRiepilogo,
 };
 // Dove trovare in testi.configurazione la descrizione di ciascun passo.
 const TESTI_PASSI = {
   1: 'genitori', 2: 'giocatrice', 3: 'calendario', 4: 'comportamenti', 5: 'scelta',
-  6: 'economia', 7: 'listino', 8: 'stagioni', 9: 'sorprese', 10: 'alert',
+  6: 'economia', 7: 'listino', 8: 'stagioni', 9: 'sorprese', 10: 'alert', 11: 'riepilogo',
 };
 
 // I passi non ancora costruiti: si vedono, ma non si può andare oltre.
@@ -42,7 +45,7 @@ const passoInCostruzione = {
   disegna: () => crea('section', { class: 'scheda' }, crea('p', {}, testi.configurazione.inCostruzione)),
 };
 
-export function creaProcedura({ archivio, bozza }) {
+export function creaProcedura({ archivio, bozza, alAvvio }) {
   const t = testi.configurazione;
   const schermo = crea('main', { class: 'schermo procedura' });
   let errori = [];
@@ -72,6 +75,12 @@ export function creaProcedura({ archivio, bozza }) {
 
   const ctx = {
     bozza,
+    vaiA: (passo) => vaiA(passo),
+    // Passo 11: avvio della settimana 0, gestito da chi ha aperto la procedura.
+    avvia: async () => {
+      clearTimeout(attesa);
+      await alAvvio?.(bozza);
+    },
     modifica(cambia, { ridisegna = false } = {}) {
       cambia(bozza);
       salvaTraPoco();
@@ -124,7 +133,9 @@ export function creaProcedura({ archivio, bozza }) {
       crea('nav', { class: 'navigazione-passi' }, [
         n > 1 ? pulsante(`‹ ${testi.comune.indietro}`, () => vaiA(n - 1)) : crea('span'),
         crea('p', { class: 'nota' }, t.salvataggioAutomatico),
-        pulsante(`${testi.comune.avanti} ›`, avanti, { classe: 'primario', disattivo: Boolean(passo.inCostruzione) }),
+        passo.senzaAvanti
+          ? crea('span')
+          : pulsante(`${testi.comune.avanti} ›`, avanti, { classe: 'primario', disattivo: Boolean(passo.inCostruzione) }),
       ]),
     ].filter(Boolean));
   }

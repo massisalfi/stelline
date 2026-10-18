@@ -231,3 +231,12 @@ export function completaBozza(bozza) {
   risultato.comportamenti = risultato.comportamenti.map((c) => completaComportamento(c, risultato.tipiGiorno));
   return risultato;
 }
+
+// Il contenuto di una versione della configurazione salvata (dopo l'avvio) si apre come la bozza:
+// si completano i campi aggiunti dalle versioni successive dell'app, senza i dati della procedura.
+export function completaContenuto(contenuto) {
+  const { passo, ...completo } = completaBozza(contenuto);
+  return completo;
+}
+
+export const FASI = ['configurazione', 'settimana0', 'gioco'];

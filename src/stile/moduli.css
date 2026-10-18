@@ -421,3 +421,16 @@ body.bloccato { overflow: hidden; }
 .scheda-alert h2 { display: flex; align-items: center; gap: 10px; }
 .codice-alert { font-size: 0.8rem; background: var(--sfondo); border-radius: 999px; padding: 2px 10px; color: var(--tenue); }
 .riassunto-alert { margin: 0; font-weight: 700; }
+
+/* Passo 11: riepilogo */
+.elenco-riepilogo.errori { border-color: var(--errore); background: var(--errore-sfondo); }
+.elenco-riepilogo.avvisi { border-color: #d9b45a; background: #fbf3df; }
+.voce-riepilogo { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 0; border-top: 1px solid rgba(0, 0, 0, .06); }
+.voce-riepilogo:first-of-type { border-top: 0; }
+.voce-riepilogo p { margin: 0; }
+.voce-riepilogo .pulsante { flex: none; }
+.griglia-riepilogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.testata-riepilogo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.righe-riepilogo { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; color: var(--testo); }
+.riga-avvio { display: flex; justify-content: center; }
+.riga-avvio .pulsante.grande { margin-top: 4px; min-width: 320px; }

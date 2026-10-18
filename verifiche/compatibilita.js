@@ -6,6 +6,7 @@ import { completaBozza } from '../src/regole/configurazione.js';
 import { creaProcedura, PASSI, TOTALE_PASSI } from '../src/interfaccia/configurazione/procedura.js';
 import { apriSchedaComportamento } from '../src/interfaccia/configurazione/scheda-comportamento.js';
 import { apriSchedaPremio } from '../src/interfaccia/configurazione/scheda-premio.js';
+import { schermataSettimana0 } from '../src/interfaccia/settimana0.js';
 
 const risultati = [];
 const palco = document.getElementById('palco');
@@ -27,6 +28,11 @@ function prova(descrizione, azione) {
 
 for (const nome of await elencoFotografie()) {
   const fotografia = await (await fetch(`test/compatibilita/${nome}`)).json();
+  if (fotografia.avviata) {
+    prova(`${fotografia.versione}: schermata della settimana 0`, () => {
+      palco.replaceChildren(schermataSettimana0({ inizio: fotografia.avviata.stato.inizioSettimana0 }));
+    });
+  }
   const salvata = fotografia.stato.bozzaConfigurazione;
   if (!salvata) {
     risultati.push({ ok: true, descrizione: `${fotografia.versione}: nessun dato salvato da aprire` });
