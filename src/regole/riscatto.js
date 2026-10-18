@@ -44,13 +44,16 @@ export function minutiResidui(idCategoria, minutiOggi, economia) {
 
 // Valuta una richiesta di riscatto. Restituisce:
 //   ammesso: se si può riscattare adesso;
-//   motivi:  perché no — 'stelline' (non bastano), 'limite' (categoria già al limite),
-//            'tolleranza' (si supererebbe la tolleranza), 'totale' (si supererebbe il tetto totale);
+//   motivi:  perché no — 'pausa' (il gioco è in pausa), 'stelline' (non bastano),
+//            'limite' (categoria già al limite), 'tolleranza' (si supererebbe la tolleranza),
+//            'totale' (si supererebbe il tetto totale);
 //   mancano: stelline che mancano (0 se bastano).
 // Un premio dello scrigno bloccato dal tetto resta nello scrigno: qui non si toglie nulla.
-export function valutaRiscatto({ premio, fonte = 'stelline', portafoglio = 0, minutiOggi = {}, economia }) {
+// RF-G09: in pausa il gioco è congelato e nessun premio si riscatta nell'app, da nessuna fonte.
+export function valutaRiscatto({ premio, fonte = 'stelline', portafoglio = 0, minutiOggi = {}, economia, inPausa = false }) {
   const motivi = [];
   let mancano = 0;
+  if (inPausa) return { ammesso: false, motivi: ['pausa'], mancano: 0 };
 
   // RN-07: costo ≤ portafoglio, solo per i premi pagati con le stelline.
   if (fonte === 'stelline' && premio.costo > portafoglio) {
@@ -72,5 +75,9 @@ export function valutaRiscatto({ premio, fonte = 'stelline', portafoglio = 0, mi
 // RF-B06: se un premio non si può usare per i tetti, la voce dice che si potrà usare
 // un altro giorno, anche quando mancano stelline.
 export function bloccatoDaiTetti(esito) {
-  return esito.motivi.some((m) => m !== 'stelline');
+  return esito.motivi.some((m) => m === 'limite' || m === 'tolleranza' || m === 'totale');
+}
+
+export function bloccatoDallaPausa(esito) {
+  return esito.motivi.includes('pausa');
 }

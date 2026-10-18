@@ -85,3 +85,15 @@ test('numeri del riepilogo', async () => {
   const n = numeri(await bozzaCompleta());
   assert.deepEqual(n, { attivi: 7, fissi: 5, aScelta: 2, catalogo: 2, premiLivello: 5, premiStelline: 1, premiBoss: 1, premiRari: 1, eccezioni: 0 });
 });
+
+test('avviso giallo per ogni comportamento senza "cosa conta come eseguito", che non blocca l\'avvio', async () => {
+  const b = await bozzaCompleta();
+  b.comportamenti[0].definizione = '';
+  b.comportamenti[3].definizione = '   ';
+  const esito = riepilogo(b);
+  assert.equal(esito.avviabile, true);
+  assert.deepEqual(esito.avvisi.filter((a) => a.codice === 'ca-senza-definizione').map((a) => [a.comportamento, a.passo]), [
+    [b.comportamenti[0].nome, 4],
+    [b.comportamenti[3].nome, 4],
+  ]);
+});

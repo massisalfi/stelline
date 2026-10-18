@@ -16,6 +16,10 @@ Web app installabile per iPad: un sistema di token economy gamificato per una fa
 - `risorse/`: icone e suoni originali.
 - `test/`: test automatici.
 
+## Pubblicazione
+
+Il sito si pubblica con GitHub Actions (`.github/workflows/pubblica.yml`): a ogni invio sul ramo `main` vengono eseguiti tutti i test e, solo se passano, si pubblicano i file dell'app elencati in `strumenti/sito.js`. Verifiche, test e strumenti restano nel repository ma non diventano pagine del sito.
+
 ## Copia offline
 
 Ogni file dell'app deve essere nell'elenco della copia offline in `sw.js`. Dopo aver aggiunto o tolto un file:

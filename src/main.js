@@ -9,7 +9,9 @@ import { creaProcedura, CHIAVE_BOZZA } from './interfaccia/configurazione/proced
 import { apriArchivio } from './dati/archivio.js';
 import { avviaSettimana0 } from './dati/avvio.js';
 import { schermataSettimana0 } from './interfaccia/settimana0.js';
-import { nuovaBozza, completaBozza } from './regole/configurazione.js';
+import { nuovaBozza, completaBozza, servePinPerRiprendere } from './regole/configurazione.js';
+import { chiediPin } from './interfaccia/componenti/tastierino.js';
+import { genitoreDelPin } from './sicurezza/pin.js';
 
 const radice = document.getElementById('app');
 
@@ -101,7 +103,8 @@ async function avvia() {
     const bozza = salvata ? completaBozza(salvata) : null;
     mostra(schermataBenvenuto({
       bozza,
-      alInizio: () => {
+      alInizio: async () => {
+        if (servePinPerRiprendere(bozza) && !(await pinPerRiprendere(bozza.genitori))) return;
         try {
           mostra(creaProcedura({
             archivio,
@@ -122,6 +125,17 @@ async function avvia() {
 
   if (fase === 'settimana0') {
     mostra(schermataSettimana0({ inizio: await archivio.leggiStato('inizioSettimana0') }));
+  }
+}
+
+// Chiede il PIN di uno dei due genitori finché è giusto; false se si annulla.
+async function pinPerRiprendere(genitori) {
+  let messaggio = '';
+  for (;;) {
+    const pin = await chiediPin({ titolo: testi.benvenuto.pinTitolo, aiuto: testi.benvenuto.pinSpiegazione, messaggio });
+    if (pin == null) return false;
+    if (await genitoreDelPin(pin, genitori)) return true;
+    messaggio = testi.benvenuto.pinSbagliato;
   }
 }
 

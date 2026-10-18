@@ -43,6 +43,9 @@ export const testi = {
     descrizione: 'Prima di iniziare, i genitori preparano insieme le regole del gioco.',
     inizia: 'Inizia la configurazione',
     riprendi: (passo) => `Riprendi la configurazione (passo ${passo})`,
+    pinTitolo: 'PIN di uno dei due genitori',
+    pinSpiegazione: 'Per riprendere la configurazione serve il PIN.',
+    pinSbagliato: 'PIN non corretto. Riprovate.',
   },
   configurazione: {
     passoDi: (n, totale) => `Passo ${n} di ${totale}`,
@@ -353,6 +356,7 @@ export const testi = {
         'stelline-oltre-tetti': (e, tipo) => `Nei giorni «${tipo(e.tipo)}» le stelline massime valgono ${e.minuti} minuti, oltre il limite di ${e.tetto}: alcune stelline scadranno senza poter essere usate.`,
         'sequenza-livelli-corta': (e) => `I premi di livello sono ${e.premi}, meno delle ${e.settimane} settimane di una stagione.`,
         'boss-senza-premio': () => 'Manca il premio del boss.',
+        'ca-senza-definizione': (e) => `«${e.comportamento || 'Un comportamento'}» non ha «cosa conta come eseguito»: scriverlo aiuta a evitare dubbi al momento della registrazione.`,
       },
       sezioni: {
         genitori: 'Genitori',

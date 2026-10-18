@@ -37,3 +37,12 @@ export async function verificaPin(pin, salvato) {
   for (let i = 0; i < calcolata.length; i++) diverse |= calcolata.charCodeAt(i) ^ salvato.impronta.charCodeAt(i);
   return diverse === 0;
 }
+
+// Il genitore a cui appartiene il PIN, oppure null. Serve per entrare dove occorre il PIN
+// di uno dei due genitori, ad esempio per riprendere la configurazione.
+export async function genitoreDelPin(pin, genitori) {
+  for (const genitore of genitori) {
+    if (genitore.pin?.impronta && await verificaPin(pin, genitore.pin)) return genitore;
+  }
+  return null;
+}

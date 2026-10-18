@@ -53,6 +53,10 @@ export function riepilogo(bozza) {
     errori.push({ ...e, passo });
   }
   const avvisi = insieme.avvisi.map((a) => ({ ...a, passo: PASSO_DEL_CODICE[a.codice] }));
+  // La definizione operativa è facoltativa, ma senza si rischiano più dubbi: un avviso per ognuno.
+  for (const c of bozza.comportamenti) {
+    if (!c.definizione?.trim()) avvisi.push({ codice: 'ca-senza-definizione', comportamento: c.nome, passo: 4 });
+  }
   return { avviabile: errori.length === 0, errori, avvisi };
 }
 

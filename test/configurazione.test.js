@@ -204,3 +204,20 @@ test('una bozza salvata con una versione precedente si completa senza perdere i 
   // Una bozza già completa non cambia.
   assert.deepEqual(completaBozza(nuova), nuova);
 });
+
+import { servePinPerRiprendere } from '../src/regole/configurazione.js';
+import { genitoreDelPin } from '../src/sicurezza/pin.js';
+
+test('dopo il passo 1 per riprendere la configurazione serve il PIN di un genitore', async () => {
+  const b = nuovaBozza();
+  assert.equal(servePinPerRiprendere(null), false);
+  assert.equal(servePinPerRiprendere(b), false); // passo 1, nessun PIN
+  b.genitori[0].pin = await creaImpronta('1111');
+  assert.equal(servePinPerRiprendere(b), false); // ancora al passo 1
+  b.genitori[1].pin = await creaImpronta('2222');
+  b.passo = 2;
+  assert.equal(servePinPerRiprendere(b), true);
+  assert.equal((await genitoreDelPin('2222', b.genitori)).id, 'genitore-2');
+  assert.equal((await genitoreDelPin('1111', b.genitori)).id, 'genitore-1');
+  assert.equal(await genitoreDelPin('3333', b.genitori), null);
+});

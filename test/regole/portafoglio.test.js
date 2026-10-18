@@ -59,7 +59,7 @@ test('RN-05: automatica "vale oggi" → nel portafoglio dello stesso giorno', ()
   assert.deepEqual(automaticheDelGiorno(SABATO, [ca], calendario), [{ comportamento: ca.id, giornoOrigine: SABATO, quantita: 2 }]);
 });
 
-test('RF-G09: in pausa le stelline automatiche arrivano a giorni alterni, dal primo giorno di pausa', () => {
+test('RF-G09 e RN-05: in pausa il gioco è congelato, nessuna stellina automatica', () => {
   // CA inventato con stellina automatica ogni giorno di weekend e di scuola.
   const sempre = {
     ...pastelli,
@@ -71,30 +71,18 @@ test('RF-G09: in pausa le stelline automatiche arrivano a giorni alterni, dal pr
   };
   const pause = [{ dal: LUNEDI, al: '2026-10-15' }]; // lunedì–giovedì: 4 giorni
   const giorni = [LUNEDI, MARTEDI, '2026-10-14', '2026-10-15'];
-  const arrivate = giorni.map((g) => automaticheDelGiorno(g, [sempre], calendario, pause).length);
-  assert.deepEqual(arrivate, [1, 0, 1, 0]);
+  assert.deepEqual(giorni.map((g) => automaticheDelGiorno(g, [sempre], calendario, pause).length), [0, 0, 0, 0]);
   // Fuori dalla pausa tornano ogni giorno.
   assert.equal(automaticheDelGiorno(VENERDI, [sempre], calendario, pause).length, 1);
+  assert.equal(automaticheDelGiorno('2026-10-11', [sempre], calendario, pause).length, 1);
 });
 
-test('RF-G09: 50% senza mezze stelline: 4 giorni di pausa con 1 stellina automatica al giorno → 2 stelline', () => {
-  const sempre = {
-    ...pastelli,
-    perTipo: { scuola: { previsto: false, stelline: 1, automatica: true }, weekend: { previsto: false, stelline: 1, automatica: true } },
-  };
-  const pause = [{ dal: '2026-10-14', al: '2026-10-17' }];
-  const totale = ['2026-10-14', '2026-10-15', VENERDI, SABATO]
-    .flatMap((g) => automaticheDelGiorno(g, [sempre], calendario, pause))
-    .reduce((s, a) => s + a.quantita, 0);
-  assert.equal(totale, 2);
-});
-
-test('RF-G09: stellina automatica "vale domani" in pausa: conta il giorno di origine', () => {
-  // Pausa venerdì e sabato: venerdì è il 1° giorno (sì), sabato il 2° (no).
-  const pause = [{ dal: VENERDI, al: SABATO }];
-  assert.deepEqual(automaticheDelGiorno(SABATO, comportamenti, calendario, pause),
+test('RF-G09: stellina automatica "vale domani" e pausa: conta il giorno di origine', () => {
+  // Venerdì in pausa: la stellina che sabato avrebbe portato non arriva.
+  assert.deepEqual(automaticheDelGiorno(SABATO, comportamenti, calendario, [{ dal: VENERDI, al: VENERDI }]), []);
+  // Pausa solo sabato: la stellina di venerdì sera arriva sabato (origine fuori pausa).
+  assert.deepEqual(automaticheDelGiorno(SABATO, comportamenti, calendario, [{ dal: SABATO, al: SABATO }]),
     [{ comportamento: scarpe.id, giornoOrigine: VENERDI, quantita: 1 }]);
-  assert.deepEqual(automaticheDelGiorno(DOMENICA, comportamenti, calendario, pause), []);
 });
 
 test('RF-G09: in pausa i comportamenti da registrare non danno stelline automatiche', () => {

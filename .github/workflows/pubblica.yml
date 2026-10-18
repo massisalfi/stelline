@@ -1,0 +1,45 @@
+# Pubblicazione su GitHub Pages dei soli file dell'app (strumenti/sito.js).
+# Prima di pubblicare si eseguono tutti i test, compresi quelli di compatibilità dei dati (RNF-16):
+# se un test fallisce, il sito resta com'era.
+name: Pubblica l'app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pubblicazione.outputs.page_url }}
+    steps:
+      - name: Prende il codice
+        uses: actions/checkout@v4
+      - name: Prepara Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Esegue tutti i test
+        run: node --test
+      - name: Prepara il sito con i soli file dell'app
+        run: node strumenti/sito.js sito
+      - name: Configura GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Carica il sito
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: sito
+      - name: Pubblica
+        id: pubblicazione
+        uses: actions/deploy-pages@v4

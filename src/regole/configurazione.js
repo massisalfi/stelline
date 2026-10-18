@@ -240,3 +240,8 @@ export function completaContenuto(contenuto) {
 }
 
 export const FASI = ['configurazione', 'settimana0', 'gioco'];
+
+// Dopo il passo 1 i PIN esistono: per riprendere la configurazione serve quello di un genitore.
+export function servePinPerRiprendere(bozza) {
+  return Boolean(bozza) && bozza.passo > 1 && bozza.genitori.some((g) => g.pin?.impronta);
+}

@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  minutiDelGiorno, proposto, minutiResidui, valutaRiscatto, bloccatoDaiTetti,
+  minutiDelGiorno, proposto, minutiResidui, valutaRiscatto, bloccatoDaiTetti, bloccatoDallaPausa,
 } from '../../src/regole/riscatto.js';
 
 const economia = {
@@ -101,4 +101,17 @@ test('RN-08: minuti già riscattati oggi, per categoria', () => {
 
 test('RN-08: una categoria sconosciuta è un errore di configurazione', () => {
   assert.throws(() => valutaRiscatto({ premio: { costo: 1, categoria: 'film', minuti: 10 }, portafoglio: 5, economia }));
+});
+
+test('RF-G09: in pausa nessun riscatto nell\'app, da nessuna fonte, anche con stelline e minuti disponibili', () => {
+  for (const fonte of ['stelline', 'scrigno', 'sorpresa', 'raro']) {
+    for (const premio of [bloccoCartoni, adesivo, videogioco]) {
+      const esito = valutaRiscatto({ premio, fonte, portafoglio: 50, minutiOggi: {}, economia, inPausa: true });
+      assert.deepEqual(esito, { ammesso: false, motivi: ['pausa'], mancano: 0 }, `${fonte}`);
+      assert.equal(bloccatoDallaPausa(esito), true);
+      assert.equal(bloccatoDaiTetti(esito), false);
+    }
+  }
+  // Fuori dalla pausa lo stesso riscatto è ammesso.
+  assert.equal(valutaRiscatto({ premio: bloccoCartoni, portafoglio: 5, economia }).ammesso, true);
 });
