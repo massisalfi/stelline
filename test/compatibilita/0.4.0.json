@@ -1,0 +1,686 @@
+{
+  "versione": "0.4.0",
+  "descrizione": "Dati salvati dalla versione 0.4.0, con contenuti inventati.",
+  "stato": {
+    "bozzaConfigurazione": {
+      "passo": 10,
+      "genitori": [
+        {
+          "id": "genitore-1",
+          "nome": "Genitore di prova A",
+          "pin": {
+            "impronta": "1818e684096a6213090d03e0426075b073c14d2b8d6428e1eeee2b2f2ff79c67",
+            "sale": "2a94471576c2e9611730fc90171a2bf6",
+            "iterazioni": 100000
+          }
+        },
+        {
+          "id": "genitore-2",
+          "nome": "Genitore di prova B",
+          "pin": {
+            "impronta": "15a858e2805e473017bf89eeb6104ed8329639ec65edb943bbb9e8db97b1e5e9",
+            "sale": "450c6e1f2214963598c69684327cd063",
+            "iterazioni": 100000
+          }
+        }
+      ],
+      "giocatrice": {
+        "nome": "Giocatrice di prova",
+        "eta": 7,
+        "voce": {
+          "attiva": true,
+          "velocita": 0.9,
+          "tono": 1.3,
+          "id": null
+        },
+        "suoni": {
+          "attivi": true,
+          "volume": 60
+        }
+      },
+      "tipiGiorno": [
+        {
+          "id": "scuola",
+          "nome": "Scuola",
+          "colore": "#2f6f5e"
+        },
+        {
+          "id": "weekend",
+          "nome": "Weekend",
+          "colore": "#c9852c"
+        },
+        {
+          "id": "festivo",
+          "nome": "Festivo",
+          "colore": "#9a3b1f"
+        },
+        {
+          "id": "vacanza",
+          "nome": "Vacanze",
+          "colore": "#4a6fa5"
+        },
+        {
+          "id": "tipo-5",
+          "nome": "Giorno dai nonni",
+          "colore": "#5c7a3a"
+        }
+      ],
+      "calendario": {
+        "settimana": {
+          "1": "scuola",
+          "2": "scuola",
+          "3": "scuola",
+          "4": "scuola",
+          "5": "scuola",
+          "6": "tipo-5",
+          "7": "weekend"
+        },
+        "eccezioni": [
+          {
+            "nome": "Vacanze di Natale",
+            "dal": "2026-12-23",
+            "al": "2027-01-06",
+            "tipo": "vacanza"
+          },
+          {
+            "nome": "Ponte",
+            "dal": "2026-12-08",
+            "al": "",
+            "tipo": "festivo"
+          }
+        ]
+      },
+      "revisione": {
+        "giorno": 7,
+        "ora": "19:30"
+      },
+      "comportamenti": [
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Piegare il pigiama",
+          "icona": "pigiama",
+          "frase": "Hai piegato il pigiama e l'hai messo sotto il cuscino.",
+          "definizione": "Conta se il pigiama è piegato e sotto il cuscino prima di uscire dalla camera. Aiuto ammesso: un adulto può ricordare dove va.",
+          "tipo": "fisso",
+          "momento": "mattina",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-1",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Lavare le mani prima di pranzo",
+          "icona": "sapone",
+          "frase": "Ti sei lavata le mani con il sapone prima di pranzo.",
+          "definizione": "Conta se le mani sono lavate con il sapone e asciugate prima di sedersi a tavola, senza bisogno di accompagnarla al lavandino.",
+          "tipo": "fisso",
+          "momento": "pomeriggio",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-2",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": 10,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Riordinare i giochi",
+          "icona": "giochi",
+          "frase": "Hai rimesso i giochi nella cesta.",
+          "definizione": "Conta se i giochi usati nel pomeriggio sono nella cesta prima di cena. Aiuto ammesso: un adulto può tenere aperta la cesta.",
+          "tipo": "fisso",
+          "momento": "pomeriggio",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-3",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Portare il piatto nel lavandino",
+          "icona": "piatto",
+          "frase": "Hai portato il tuo piatto nel lavandino.",
+          "definizione": "Conta se, finita la cena, porta il proprio piatto nel lavandino senza farlo cadere. Le posate possono restare a tavola.",
+          "tipo": "fisso",
+          "momento": "sera",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-4",
+          "stato": "attivo"
+        },
+        {
+          "validita": "domani",
+          "automaticaSeDomaniNon": [
+            "scuola"
+          ],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Mettere le scarpe in fila",
+          "icona": "scarpe",
+          "frase": "Hai messo le scarpe in fila vicino alla porta.",
+          "definizione": "Conta se la sera le scarpe sono in fila vicino alla porta. Quando domani non c'è scuola, la stellina arriva da sola.",
+          "tipo": "fisso",
+          "momento": "sera",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-5",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Apparecchiare la tavola",
+          "icona": "tavola",
+          "frase": "Hai apparecchiato la tavola con i tovaglioli e i bicchieri.",
+          "definizione": "Conta se mette tovaglioli e bicchieri per tutti. Piatti e posate li porta un adulto.",
+          "tipo": "scelta",
+          "momento": "sera",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-6",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Dare da mangiare al pesce",
+          "icona": "pesce",
+          "frase": "Hai dato da mangiare al pesce.",
+          "definizione": "Conta se mette un pizzico di mangime nella vasca, con un adulto presente che controlla la dose.",
+          "tipo": "scelta",
+          "momento": "pomeriggio",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-7",
+          "stato": "attivo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Mettere i libri sullo scaffale",
+          "icona": "libri",
+          "frase": "Hai rimesso i libri sullo scaffale.",
+          "definizione": "Conta se i libri sfogliati durante il giorno tornano sullo scaffale prima di andare a letto.",
+          "tipo": "catalogo",
+          "momento": "sera",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-8",
+          "stato": "catalogo"
+        },
+        {
+          "validita": "oggi",
+          "automaticaSeDomaniNon": [],
+          "massimoSolleciti": 3,
+          "timer": null,
+          "laurea": {
+            "percentuale": 80,
+            "settimane": 3
+          },
+          "nome": "Sistemare i colori",
+          "icona": "colori",
+          "frase": "Hai rimesso i colori nella scatola.",
+          "definizione": "Conta se, finito di disegnare, i colori sono nella scatola chiusa.",
+          "tipo": "catalogo",
+          "momento": "pomeriggio",
+          "perTipo": {
+            "scuola": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "weekend": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "festivo": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "vacanza": {
+              "previsto": true,
+              "stelline": 1,
+              "automatica": false
+            },
+            "tipo-5": {
+              "previsto": false,
+              "stelline": 1,
+              "automatica": false
+            }
+          },
+          "id": "ca-9",
+          "stato": "catalogo"
+        }
+      ],
+      "economia": {
+        "conversione": {
+          "stelline": 5,
+          "minuti": 20,
+          "categoria": "cartoni"
+        },
+        "sogliaLivello": 40,
+        "categorie": [
+          {
+            "id": "cartoni",
+            "nome": "Cartoni",
+            "limite": 40,
+            "tolleranza": 45
+          },
+          {
+            "id": "videogiochi",
+            "nome": "Videogiochi",
+            "limite": 50,
+            "tolleranza": 55
+          },
+          {
+            "id": "categoria-3",
+            "nome": "Film",
+            "limite": 60,
+            "tolleranza": 70
+          }
+        ],
+        "tettoTotale": 90,
+        "confermaRiscatto": "schermo"
+      },
+      "premi": [
+        {
+          "famiglia": "tangibile",
+          "modalita": "stelline",
+          "costo": 3,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": 0.5,
+          "nome": "Adesivo da scegliere",
+          "icona": "stella",
+          "id": "premio-1"
+        },
+        {
+          "famiglia": "status",
+          "modalita": "livello",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": true,
+          "euro": null,
+          "nome": "Corona del giorno",
+          "icona": "corona",
+          "id": "premio-2"
+        },
+        {
+          "famiglia": "potere",
+          "modalita": "livello",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": null,
+          "nome": "Scegliere il gioco del pomeriggio",
+          "icona": "biglietto",
+          "id": "premio-3"
+        },
+        {
+          "famiglia": "accesso",
+          "modalita": "livello",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": "videogiochi",
+          "minuti": 30,
+          "riutilizzabile": false,
+          "euro": null,
+          "nome": "Videogioco per 30 minuti",
+          "icona": "joystick",
+          "id": "premio-4"
+        },
+        {
+          "famiglia": "tangibile",
+          "modalita": "livello",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": 5,
+          "nome": "Pennarelli nuovi",
+          "icona": "pennello",
+          "id": "premio-5"
+        },
+        {
+          "famiglia": "potere",
+          "modalita": "livello",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": null,
+          "nome": "Scegliere la musica in macchina",
+          "icona": "musica",
+          "id": "premio-6"
+        },
+        {
+          "famiglia": "tangibile",
+          "modalita": "boss",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": 12,
+          "nome": "Puzzle nuovo",
+          "icona": "regalo",
+          "id": "premio-7"
+        },
+        {
+          "famiglia": "emotivo",
+          "modalita": "raro",
+          "costo": 5,
+          "ogniStagioni": 2,
+          "categoria": null,
+          "minuti": null,
+          "riutilizzabile": false,
+          "euro": 4,
+          "nome": "Palloncini in camera",
+          "icona": "palloncino",
+          "id": "premio-8"
+        }
+      ],
+      "stagioni": {
+        "settimane": 5,
+        "boss": {
+          "tipo": "comportamento",
+          "comportamento": "ca-1",
+          "giorni": 4,
+          "percentuale": 80
+        }
+      },
+      "sorprese": {
+        "minimo": 1,
+        "massimo": 10,
+        "contenuti": {
+          "avatar": true,
+          "storia": true,
+          "creature": false,
+          "bonus": true
+        },
+        "stellineBonus": 2
+      },
+      "alert": {
+        "a2": {
+          "percentuale": 50,
+          "settimane": 2
+        },
+        "a3": {
+          "rifiutate": 3
+        },
+        "a4": {
+          "dubbi": 3
+        },
+        "a5": {
+          "punti": 5,
+          "settimane": 6
+        },
+        "a6": {
+          "revisioni": 2
+        },
+        "a8": {
+          "giorni": 10
+        }
+      }
+    }
+  }
+}

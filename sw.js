@@ -1,7 +1,7 @@
 // Service worker: tiene una copia completa dell'app sull'iPad, così funziona senza rete (RNF-02).
 // Ogni file dell'app deve comparire in FILE: un test controlla che l'elenco sia completo.
 
-const VERSIONE = '0.3.1';
+const VERSIONE = '0.4.0';
 const CACHE = `stelline-${VERSIONE}`;
 
 const FILE = [
