@@ -135,8 +135,9 @@ test('passo 4: un comportamento nuovo va completato prima di andare avanti', () 
   const bozza = nuovaBozza();
   const ca = nuovoComportamento(bozza.tipiGiorno, 'ca-1');
   assert.deepEqual(codici(controllaComportamento(ca, bozza.tipiGiorno)),
-    ['ca-nome-mancante', 'ca-icona-mancante', 'ca-frase-mancante', 'ca-definizione-mancante']);
-  Object.assign(ca, { nome: 'Prova', icona: 'giochi', frase: 'Hai fatto la prova.', definizione: 'Conta se…' });
+    ['ca-nome-mancante', 'ca-icona-mancante', 'ca-frase-mancante']);
+  // La definizione operativa è facoltativa.
+  Object.assign(ca, { nome: 'Prova', icona: 'giochi', frase: 'Hai fatto la prova.' });
   assert.deepEqual(controllaComportamento(ca, bozza.tipiGiorno), []);
   bozza.comportamenti = [ca, { ...ca, id: 'ca-2', nome: '' }];
   assert.deepEqual(controllaComportamenti(bozza), [{ codice: 'ca-incompleto', indice: 1 }]);

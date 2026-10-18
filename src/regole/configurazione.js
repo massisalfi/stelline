@@ -164,7 +164,7 @@ export function controllaComportamento(c, tipiGiorno) {
   if (vuoto(c.nome)) errori.push({ codice: 'ca-nome-mancante' });
   if (!c.icona) errori.push({ codice: 'ca-icona-mancante' });
   if (vuoto(c.frase)) errori.push({ codice: 'ca-frase-mancante' });
-  if (vuoto(c.definizione)) errori.push({ codice: 'ca-definizione-mancante' });
+  // La definizione operativa è consigliata ma facoltativa (decisione del 18 ottobre 2026).
   if (!['fisso', 'scelta', 'catalogo'].includes(c.tipo)) errori.push({ codice: 'ca-tipo' });
   if (!MOMENTI.includes(c.momento)) errori.push({ codice: 'ca-momento' });
   if (!['oggi', 'domani'].includes(c.validita)) errori.push({ codice: 'ca-validita' });
