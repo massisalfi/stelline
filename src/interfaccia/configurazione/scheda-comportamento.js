@@ -145,7 +145,7 @@ export function apriSchedaComportamento({ comportamento, tipiGiorno, voce, nuovo
           areaTesto({
             etichetta: t.definizione, valore: ca.definizione, spiegazione: t.definizioneSpiegazione,
             segnaposto: t.definizioneEsempio, righe: 4,
-            errore: errore('ca-definizione-mancante'), alCambio: (v) => { ca.definizione = v; },
+            alCambio: (v) => { ca.definizione = v; },
           }),
         ]),
         sezione(t.icona, [sceltaIcona(ca, (id) => { ca.icona = id; }, errore('ca-icona-mancante'))]),
