@@ -53,6 +53,17 @@ export function alertProposti() {
   };
 }
 
+// RF-G07: suggerimenti del pulsante dubbio per la coppia (testi iniziali, modificabili nel pannello).
+export function suggerimentiDubbioProposti() {
+  return [
+    'Descrivete il fatto, non il giudizio: «ha finito dopo il timer», non «ha fatto la lenta».',
+    'Se il caso non è previsto dalla definizione, oggi vale la lettura più semplice; alla revisione riscrivete la regola insieme.',
+    'Niente braccio di ferro: esauriti i solleciti, la conseguenza.',
+    'Accogliete l\'emozione senza rinegoziare la stellina.',
+    'Rinforzate subito e con parole specifiche («hai preparato lo zaino da sola»), senza enfasi.',
+  ];
+}
+
 // Passo 7: un premio del listino.
 //   famiglia: Status, Accesso, Potere, Emotivo, Tangibile
 //   modalita: 'stelline' (costo), 'livello' (sequenza), 'boss', 'raro' (ogni N stagioni)

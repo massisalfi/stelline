@@ -136,7 +136,9 @@ export function contatoreNumerico({ etichetta, valore, minimo, massimo, passo = 
 
 // Scelta tra poche opzioni con pulsanti affiancati (uno solo attivo).
 // opzioni: [{ valore, testo }]
-export function sceltaPulsanti({ etichetta, valore, opzioni, alCambio, errore, spiegazione }) {
+// nascondiEtichetta: l'etichetta resta per chi usa la lettura dello schermo, ma non si vede
+// (quando il titolo del riquadro dice già la stessa cosa).
+export function sceltaPulsanti({ etichetta, valore, opzioni, alCambio, errore, spiegazione, nascondiEtichetta = false }) {
   // Con più di tre opzioni i pulsanti vanno a capo, così nessuno esce dal riquadro.
   const gruppo = crea('div', { class: opzioni.length > 3 ? 'segmenti a-capo' : 'segmenti', role: 'radiogroup', 'aria-label': etichetta });
   const testoSpiegazione = (v) => (typeof spiegazione === 'function' ? spiegazione(v) : spiegazione);
@@ -154,7 +156,7 @@ export function sceltaPulsanti({ etichetta, valore, opzioni, alCambio, errore, s
   }, o.testo)));
   disegna(valore);
   return crea('div', { class: classeCampo(errore) }, [
-    crea('span', { class: 'etichetta' }, etichetta),
+    crea('span', { class: nascondiEtichetta ? 'solo-lettori' : 'etichetta' }, etichetta),
     gruppo,
     nota,
     messaggioErrore(errore),

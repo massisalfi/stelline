@@ -11,7 +11,8 @@ import { avviaSettimana0 } from './dati/avvio.js';
 import { caricaConfigurazione } from './dati/configurazione.js';
 import { schermataAreaChiusa } from './interfaccia/bambina/area-chiusa.js';
 import { schermataAccesso } from './interfaccia/genitori/accesso.js';
-import { schermataAreaGenitori } from './interfaccia/genitori/area-genitori.js';
+import { creaAreaGenitori } from './interfaccia/genitori/area-genitori.js';
+import { aggiornaGiornata } from './dati/registro.js';
 import { avviaSessione } from './interfaccia/sessione.js';
 import { nuovaBozza, completaBozza, servePinPerRiprendere } from './regole/configurazione.js';
 import { chiediPin } from './interfaccia/componenti/tastierino.js';
@@ -131,8 +132,18 @@ async function avvia() {
 }
 
 // Area della bambina "chiusa": un gesto discreto porta all'accesso dei genitori (RF-G01).
+// All'apertura si aggiornano le stelline automatiche di oggi e le scadenze (RN-05, RN-06).
 async function mostraAreaChiusa(archivio) {
+  chiudiFinestre();
+  const { oggi, versioni } = await caricaConfigurazione(archivio);
+  await aggiornaGiornata(archivio, versioni, oggi);
   mostra(schermataAreaChiusa({ alAccesso: () => mostraAccesso(archivio) }));
+}
+
+// Le schede e i tastierini aperti sopra la pagina si chiudono quando la sessione finisce.
+function chiudiFinestre() {
+  for (const finestra of document.querySelectorAll('.scheda-sfondo, .pin-sfondo')) finestra.remove();
+  document.body.classList.remove('bloccato');
 }
 
 async function mostraAccesso(archivio) {
@@ -158,13 +169,13 @@ async function mostraAccesso(archivio) {
 
 // Area genitori: si chiude dopo 2 minuti senza tocchi, o con "Esci" (sezione 3, CT-18).
 async function mostraAreaGenitori(archivio, genitore) {
-  const { oggi, diOggi } = await caricaConfigurazione(archivio);
+  const { oggi, versioni } = await caricaConfigurazione(archivio);
+  await aggiornaGiornata(archivio, versioni, oggi);
   const sessione = avviaSessione({ alScadere: () => mostraAreaChiusa(archivio) });
   window.scrollTo({ top: 0 });
-  mostra(schermataAreaGenitori({
+  mostra(await creaAreaGenitori({
+    archivio,
     genitore,
-    configurazione: diOggi,
-    oggi,
     inizio: await archivio.leggiStato('inizioSettimana0'),
     alUscita: () => { sessione.chiudi(); mostraAreaChiusa(archivio); },
   }));

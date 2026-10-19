@@ -9,7 +9,7 @@ import { apriSchedaPremio } from '../src/interfaccia/configurazione/scheda-premi
 import { completaContenuto } from '../src/regole/configurazione.js';
 import { schermataAreaChiusa } from '../src/interfaccia/bambina/area-chiusa.js';
 import { schermataAccesso } from '../src/interfaccia/genitori/accesso.js';
-import { schermataAreaGenitori } from '../src/interfaccia/genitori/area-genitori.js';
+import { creaAreaGenitori } from '../src/interfaccia/genitori/area-genitori.js';
 
 const risultati = [];
 const palco = document.getElementById('palco');
@@ -43,13 +43,27 @@ for (const nome of await elencoFotografie()) {
         genitori: ultima.genitori, ultimoId: stato.ultimoGenitore, alAccesso: () => {}, alRitorno: () => {},
       }));
     });
-    for (const [i, contenuto] of contenuti.entries()) {
-      prova(`${fotografia.versione}: area genitori con la configurazione ${configurazioni[i].numero}`, () => {
-        palco.replaceChildren(schermataAreaGenitori({
-          genitore: contenuto.genitori[0], configurazione: contenuto,
-          oggi: stato.inizioSettimana0, inizio: stato.inizioSettimana0, alUscita: () => {},
-        }));
-      });
+    // Archivio finto in memoria, con le configurazioni della fotografia e nessuna registrazione.
+    const salvati = {
+      configurazioni,
+      registrazioni: fotografia.avviata.registrazioni ?? [],
+      movimentiStelline: fotografia.avviata.movimentiStelline ?? [],
+      movimentiPunti: fotografia.avviata.movimentiPunti ?? [],
+    };
+    const archivioInMemoria = {
+      tutti: async (c) => structuredClone(salvati[c] ?? []),
+      delGiorno: async (c, giorno) => structuredClone((salvati[c] ?? []).filter((r) => r.giorno === giorno)),
+    };
+    const [a, m, g] = stato.inizioSettimana0.split('-').map(Number);
+    try {
+      palco.replaceChildren(await creaAreaGenitori({
+        archivio: archivioInMemoria, genitore: ultima.genitori[0], inizio: stato.inizioSettimana0,
+        alUscita: () => {}, adesso: () => new Date(a, m - 1, g, 12).getTime(),
+      }));
+      const righe = palco.querySelectorAll('.riga-oggi').length;
+      risultati.push({ ok: righe > 0, descrizione: `${fotografia.versione}: schermata Oggi (${righe} comportamenti)` });
+    } catch (errore) {
+      risultati.push({ ok: false, descrizione: `${fotografia.versione}: schermata Oggi`, dettaglio: errore.message });
     }
   }
   const salvata = fotografia.stato.bozzaConfigurazione;

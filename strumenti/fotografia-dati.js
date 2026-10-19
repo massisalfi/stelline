@@ -11,6 +11,7 @@ import { nuovaBozza } from '../src/regole/configurazione.js';
 import { importaModello, importaListino } from '../src/modello-esempio.js';
 import { creaImpronta } from '../src/sicurezza/pin.js';
 import { avvioSettimana0 } from '../src/regole/riepilogo.js';
+import { nuovaRegistrazione } from '../src/regole/oggi.js';
 
 const destinazione = new URL(`../test/compatibilita/${VERSIONE}.json`, import.meta.url);
 if (existsSync(destinazione)) {
@@ -54,6 +55,18 @@ const completa = structuredClone(bozza);
 completa.passo = 11;
 const { versione, inizio } = avvioSettimana0(completa, new Date(2026, 9, 19, 20, 0).getTime());
 
+// Alcune registrazioni della settimana 0 (dalla 0.6.0): un caso valido, uno rifiutato, uno non eseguito con dubbio.
+const conf = versione.contenuto;
+const registra = (id, ca, scelte) => nuovaRegistrazione({
+  id, comportamento: ca, calendario: conf.calendario, scelte, genitore: 'genitore-1',
+  giorno: inizio, giornoRegistrazione: inizio, quando: new Date(2026, 9, 19, 20, 30).getTime(), versione: 1,
+});
+const registrazioni = [
+  registra('reg-1', conf.comportamenti[0], { eseguito: true, solleciti: 0, stellinaAccettata: true }),
+  registra('reg-2', conf.comportamenti[2], { eseguito: true, solleciti: 1, stellinaAccettata: false }),
+  registra('reg-3', conf.comportamenti[1], { eseguito: false, dubbio: true, nota: 'nota inventata' }),
+];
+
 const fotografia = {
   versione: VERSIONE,
   descrizione: `Dati salvati dalla versione ${VERSIONE}, con contenuti inventati.`,
@@ -63,6 +76,9 @@ const fotografia = {
   avviata: {
     stato: { fase: 'settimana0', inizioSettimana0: inizio, ultimoGenitore: 'genitore-2' },
     configurazioni: [versione],
+    registrazioni: registrazioni.map((r) => r.registrazione),
+    movimentiStelline: registrazioni.flatMap((r) => r.movimenti),
+    movimentiPunti: registrazioni.flatMap((r) => r.punti),
   },
 };
 writeFileSync(destinazione, `${JSON.stringify(fotografia, null, 2)}\n`);

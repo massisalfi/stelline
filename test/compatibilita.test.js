@@ -15,6 +15,8 @@ import {
 import { verificaProporzione, verificaCatalogo } from '../src/regole/proporzione.js';
 import { valida } from '../src/regole/validazione.js';
 import { profiloProposto } from '../src/regole/sessione.js';
+import { nuovaRegistrazione, statoInOggi } from '../src/regole/oggi.js';
+import { saldo } from '../src/regole/portafoglio.js';
 
 const CARTELLA = new URL('./compatibilita/', import.meta.url);
 const confronta = (a, b) => a.split('.').map(Number).reduce((d, n, i) => d || n - Number(b.split('.')[i]), 0);
@@ -117,5 +119,32 @@ for (const fotografia of fotografie.filter((f) => f.avviata)) {
       }
       assert.equal(valida(aperta).valida, true, `configurazione ${v.numero} non più valida`);
     }
+  });
+}
+
+// Registrazioni, stelline e punti salvati (dalla 0.6.0).
+for (const fotografia of fotografie.filter((f) => f.avviata?.registrazioni)) {
+  const { registrazioni, movimentiStelline, movimentiPunti, configurazioni } = fotografia.avviata;
+
+  test(`${fotografia.versione} (registrazioni): si leggono con la forma attuale e danno gli stessi saldi`, () => {
+    const conf = completaContenuto(structuredClone(configurazioni[0].contenuto));
+    const modello = nuovaRegistrazione({
+      id: 'modello', comportamento: conf.comportamenti[0], calendario: conf.calendario,
+      scelte: { eseguito: true, solleciti: 0 }, genitore: 'g', giorno: '2026-01-05', giornoRegistrazione: '2026-01-05', quando: 0, versione: 1,
+    });
+    for (const r of registrazioni) {
+      for (const campo of Object.keys(modello.registrazione)) assert.ok(campo in r, `${r.id}: manca ${campo}`);
+      assert.ok(['da fare', 'automatico', 'eseguito', 'non eseguito', 'rifiutata'].includes(statoInOggi('previsto', r)));
+    }
+    for (const m of movimentiStelline) {
+      for (const campo of ['id', 'giorno', 'tipo', 'quantita', 'origine']) assert.ok(campo in m, `movimento ${m.id}: manca ${campo}`);
+    }
+    for (const p of movimentiPunti) {
+      for (const campo of ['id', 'giorno', 'quantita', 'origine']) assert.ok(campo in p, `punti ${p.id}: manca ${campo}`);
+    }
+    // Il saldo ricostruito dal registro coincide con le stelline delle registrazioni.
+    const giorni = [...new Set(movimentiStelline.map((m) => m.giorno))];
+    const totale = giorni.reduce((s, g) => s + saldo(g, movimentiStelline), 0);
+    assert.equal(totale, registrazioni.reduce((s, r) => s + r.stelline, 0));
   });
 }

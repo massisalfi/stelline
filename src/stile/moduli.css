@@ -480,3 +480,54 @@ body.bloccato { overflow: hidden; }
 .riga-oggi { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--bordo); }
 .riga-oggi-testo { display: flex; flex-direction: column; }
 .nota.sicurezza { text-align: center; }
+
+/* Passo 13: Oggi e registrazione */
+.portafoglio { margin: 0; font-size: 1.6rem; font-weight: 700; color: #b8860b; letter-spacing: 2px; }
+.testata-elenco { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.testata-elenco h2 { margin: 0; }
+.elenco-oggi li { list-style: none; }
+button.riga-oggi {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 12px;
+  min-height: 64px;
+  border: 1px solid var(--bordo);
+  border-radius: 14px;
+  background: var(--carta);
+  font: inherit;
+  color: var(--testo);
+  text-align: left;
+  cursor: pointer;
+}
+.distintivo-stato { font-size: 0.85rem; font-weight: 600; border-radius: 999px; padding: 4px 12px; background: var(--sfondo); color: var(--tenue); white-space: nowrap; }
+.stato-eseguito .distintivo-stato { background: #dfeee9; color: var(--ok); }
+.stato-rifiutata .distintivo-stato { background: #fbf3df; color: #8a5a00; }
+.stato-non-eseguito .distintivo-stato { background: #eef0f2; color: var(--tenue); }
+.stato-automatico .distintivo-stato { background: #e7e0f3; color: #5b4690; }
+.stato-da-fare { border-color: var(--accento); }
+.stato-da-fare .distintivo-stato { background: var(--accento); color: var(--accento-testo); }
+.testata-registrazione { display: flex; gap: 16px; align-items: flex-start; }
+.scelta-grande { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pulsante.grande-scelta { min-height: 72px; font-size: 1.25rem; }
+.pulsante.grande-scelta.attivo { background: var(--accento); border-color: var(--accento); color: var(--accento-testo); }
+.suggerimenti { display: flex; flex-direction: column; gap: 6px; }
+.proposta-definizione { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: #fbf3df; }
+.barra-annulla {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px 10px 20px;
+  border-radius: 16px;
+  background: var(--testo);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  z-index: 8;
+  max-width: calc(100% - 32px);
+}

@@ -1,7 +1,7 @@
 // Service worker: tiene una copia completa dell'app sull'iPad, così funziona senza rete (RNF-02).
 // Ogni file dell'app deve comparire in FILE: un test controlla che l'elenco sia completo.
 
-const VERSIONE = '0.5.0';
+const VERSIONE = '0.6.0';
 const CACHE = `stelline-${VERSIONE}`;
 
 const FILE = [
@@ -51,6 +51,7 @@ const FILE = [
   'src/dati/archivio.js',
   'src/dati/avvio.js',
   'src/dati/configurazione.js',
+  'src/dati/registro.js',
   'src/interfaccia/apri-dall-icona.js',
   'src/interfaccia/bambina/area-chiusa.js',
   'src/interfaccia/benvenuto.js',
@@ -75,6 +76,7 @@ const FILE = [
   'src/interfaccia/configurazione/scheda-premio.js',
   'src/interfaccia/genitori/accesso.js',
   'src/interfaccia/genitori/area-genitori.js',
+  'src/interfaccia/genitori/scheda-registrazione.js',
   'src/interfaccia/sessione.js',
   'src/main.js',
   'src/modello-esempio.js',
@@ -82,7 +84,9 @@ const FILE = [
   'src/regole/configurazione-gioco.js',
   'src/regole/configurazione.js',
   'src/regole/date.js',
+  'src/regole/giornata.js',
   'src/regole/giorno.js',
+  'src/regole/oggi.js',
   'src/regole/portafoglio.js',
   'src/regole/proporzione.js',
   'src/regole/registrazione.js',
