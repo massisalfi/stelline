@@ -14,6 +14,7 @@ import {
 } from '../src/regole/configurazione.js';
 import { verificaProporzione, verificaCatalogo } from '../src/regole/proporzione.js';
 import { valida } from '../src/regole/validazione.js';
+import { profiloProposto } from '../src/regole/sessione.js';
 
 const CARTELLA = new URL('./compatibilita/', import.meta.url);
 const confronta = (a, b) => a.split('.').map(Number).reduce((d, n, i) => d || n - Number(b.split('.')[i]), 0);
@@ -93,9 +94,13 @@ for (const fotografia of fotografie) {
 for (const fotografia of fotografie.filter((f) => f.avviata)) {
   const { stato, configurazioni } = fotografia.avviata;
 
-  test(`${fotografia.versione} (avviata): fase e data di inizio si leggono`, () => {
+  test(`${fotografia.versione} (avviata): fase, data di inizio e ultimo profilo si leggono`, () => {
     assert.ok(FASI.includes(stato.fase), `fase sconosciuta: ${stato.fase}`);
     assert.match(stato.inizioSettimana0, /^\d{4}-\d{2}-\d{2}$/);
+    // L'ultimo profilo usato (dalla 0.6.0) è facoltativo; se c'è, è uno dei genitori o viene ignorato.
+    if (stato.ultimoGenitore !== undefined) assert.equal(typeof stato.ultimoGenitore, 'string');
+    const genitori = completaContenuto(structuredClone(configurazioni.at(-1).contenuto)).genitori;
+    assert.ok(profiloProposto(genitori, stato.ultimoGenitore), 'nessun profilo da proporre');
   });
 
   test(`${fotografia.versione} (avviata): ogni versione della configurazione si apre senza perdere nulla`, () => {

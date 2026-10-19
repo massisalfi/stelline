@@ -32,11 +32,29 @@ export const testi = {
       'Aprite Stelline dalla nuova icona.',
     ],
   },
-  settimana0: {
-    titolo: 'Settimana 0 in corso',
+  areaChiusa: {
+    accesso: 'Area genitori: tenete premuto',
+  },
+  accesso: {
+    titolo: 'Area genitori',
+    chi: 'Chi entra?',
+    pin: (nome) => `PIN di ${nome}`,
+    sbagliato: 'PIN non corretto. Riprovate.',
+    torna: 'Torna indietro',
+  },
+  areaGenitori: {
+    titolo: 'Area genitori',
+    ciao: (nome) => `Ciao ${nome}`,
+    esci: 'Esci',
+    sicurezza: 'Per sicurezza l\'area si chiude da sola dopo 2 minuti senza tocchi.',
+    settimana0: 'Settimana 0 in corso',
     iniziata: (giorno) => `Iniziata ${giorno}.`,
-    spiegazione: 'In questa settimana si registrano i comportamenti senza mostrare il gioco: serve a misurare il punto di partenza.',
+    spiegazione: 'In questa settimana si registrano i comportamenti senza mostrare il gioco alla bambina: serve a misurare il punto di partenza.',
+    oggi: (giorno) => `Comportamenti di oggi, ${giorno}`,
+    nessuno: 'Oggi non è previsto nessun comportamento.',
+    stati: { previsto: 'da registrare', automatico: 'stellina automatica' },
     prossimo: 'La registrazione dei comportamenti arriva con il prossimo aggiornamento dell\'app.',
+    nonTrovata: 'La configurazione non si trova nell\'archivio. Chiudete l\'app e riapritela; se il problema resta, segnalatelo.',
   },
   benvenuto: {
     titolo: 'Benvenuti',

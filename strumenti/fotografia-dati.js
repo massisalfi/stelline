@@ -61,7 +61,7 @@ const fotografia = {
   stato: { bozzaConfigurazione: bozza },
   // Dopo l'avvio della settimana 0: niente bozza, la configurazione salvata come versione.
   avviata: {
-    stato: { fase: 'settimana0', inizioSettimana0: inizio },
+    stato: { fase: 'settimana0', inizioSettimana0: inizio, ultimoGenitore: 'genitore-2' },
     configurazioni: [versione],
   },
 };

@@ -6,7 +6,10 @@ import { completaBozza } from '../src/regole/configurazione.js';
 import { creaProcedura, PASSI, TOTALE_PASSI } from '../src/interfaccia/configurazione/procedura.js';
 import { apriSchedaComportamento } from '../src/interfaccia/configurazione/scheda-comportamento.js';
 import { apriSchedaPremio } from '../src/interfaccia/configurazione/scheda-premio.js';
-import { schermataSettimana0 } from '../src/interfaccia/settimana0.js';
+import { completaContenuto } from '../src/regole/configurazione.js';
+import { schermataAreaChiusa } from '../src/interfaccia/bambina/area-chiusa.js';
+import { schermataAccesso } from '../src/interfaccia/genitori/accesso.js';
+import { schermataAreaGenitori } from '../src/interfaccia/genitori/area-genitori.js';
 
 const risultati = [];
 const palco = document.getElementById('palco');
@@ -29,9 +32,25 @@ function prova(descrizione, azione) {
 for (const nome of await elencoFotografie()) {
   const fotografia = await (await fetch(`test/compatibilita/${nome}`)).json();
   if (fotografia.avviata) {
-    prova(`${fotografia.versione}: schermata della settimana 0`, () => {
-      palco.replaceChildren(schermataSettimana0({ inizio: fotografia.avviata.stato.inizioSettimana0 }));
+    const { stato, configurazioni } = fotografia.avviata;
+    const contenuti = configurazioni.map((v) => completaContenuto(v.contenuto));
+    const ultima = contenuti.at(-1);
+    prova(`${fotografia.versione}: area della bambina chiusa`, () => {
+      palco.replaceChildren(schermataAreaChiusa({ alAccesso: () => {} }));
     });
+    prova(`${fotografia.versione}: accesso dei genitori`, () => {
+      palco.replaceChildren(schermataAccesso({
+        genitori: ultima.genitori, ultimoId: stato.ultimoGenitore, alAccesso: () => {}, alRitorno: () => {},
+      }));
+    });
+    for (const [i, contenuto] of contenuti.entries()) {
+      prova(`${fotografia.versione}: area genitori con la configurazione ${configurazioni[i].numero}`, () => {
+        palco.replaceChildren(schermataAreaGenitori({
+          genitore: contenuto.genitori[0], configurazione: contenuto,
+          oggi: stato.inizioSettimana0, inizio: stato.inizioSettimana0, alUscita: () => {},
+        }));
+      });
+    }
   }
   const salvata = fotografia.stato.bozzaConfigurazione;
   if (!salvata) {

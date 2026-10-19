@@ -8,7 +8,11 @@ import { schermataApriDallIcona } from './interfaccia/apri-dall-icona.js';
 import { creaProcedura, CHIAVE_BOZZA } from './interfaccia/configurazione/procedura.js';
 import { apriArchivio } from './dati/archivio.js';
 import { avviaSettimana0 } from './dati/avvio.js';
-import { schermataSettimana0 } from './interfaccia/settimana0.js';
+import { caricaConfigurazione } from './dati/configurazione.js';
+import { schermataAreaChiusa } from './interfaccia/bambina/area-chiusa.js';
+import { schermataAccesso } from './interfaccia/genitori/accesso.js';
+import { schermataAreaGenitori } from './interfaccia/genitori/area-genitori.js';
+import { avviaSessione } from './interfaccia/sessione.js';
 import { nuovaBozza, completaBozza, servePinPerRiprendere } from './regole/configurazione.js';
 import { chiediPin } from './interfaccia/componenti/tastierino.js';
 import { genitoreDelPin } from './sicurezza/pin.js';
@@ -110,9 +114,9 @@ async function avvia() {
             archivio,
             bozza: bozza ?? nuovaBozza(),
             alAvvio: async (completa) => {
-              const { inizio } = await avviaSettimana0(archivio, completa);
+              await avviaSettimana0(archivio, completa);
               window.scrollTo({ top: 0 });
-              mostra(schermataSettimana0({ inizio }));
+              await mostraAreaChiusa(archivio);
             },
           }));
         } catch (errore) {
@@ -123,9 +127,47 @@ async function avvia() {
     return;
   }
 
-  if (fase === 'settimana0') {
-    mostra(schermataSettimana0({ inizio: await archivio.leggiStato('inizioSettimana0') }));
+  if (fase === 'settimana0') await mostraAreaChiusa(archivio);
+}
+
+// Area della bambina "chiusa": un gesto discreto porta all'accesso dei genitori (RF-G01).
+async function mostraAreaChiusa(archivio) {
+  mostra(schermataAreaChiusa({ alAccesso: () => mostraAccesso(archivio) }));
+}
+
+async function mostraAccesso(archivio) {
+  const { ultima } = await caricaConfigurazione(archivio);
+  if (!ultima?.genitori?.length) {
+    mostraErrore(new Error(testi.areaGenitori.nonTrovata));
+    return;
   }
+  const torna = () => mostraAreaChiusa(archivio);
+  // Anche la schermata del PIN torna all'area della bambina dopo 2 minuti senza tocchi.
+  const attesa = avviaSessione({ alScadere: torna });
+  mostra(schermataAccesso({
+    genitori: ultima.genitori,
+    ultimoId: await archivio.leggiStato('ultimoGenitore'),
+    alRitorno: () => { attesa.chiudi(); torna(); },
+    alAccesso: async (genitore) => {
+      attesa.chiudi();
+      await archivio.scriviStato('ultimoGenitore', genitore.id);
+      await mostraAreaGenitori(archivio, genitore);
+    },
+  }));
+}
+
+// Area genitori: si chiude dopo 2 minuti senza tocchi, o con "Esci" (sezione 3, CT-18).
+async function mostraAreaGenitori(archivio, genitore) {
+  const { oggi, diOggi } = await caricaConfigurazione(archivio);
+  const sessione = avviaSessione({ alScadere: () => mostraAreaChiusa(archivio) });
+  window.scrollTo({ top: 0 });
+  mostra(schermataAreaGenitori({
+    genitore,
+    configurazione: diOggi,
+    oggi,
+    inizio: await archivio.leggiStato('inizioSettimana0'),
+    alUscita: () => { sessione.chiudi(); mostraAreaChiusa(archivio); },
+  }));
 }
 
 // Chiede il PIN di uno dei due genitori finché è giusto; false se si annulla.
