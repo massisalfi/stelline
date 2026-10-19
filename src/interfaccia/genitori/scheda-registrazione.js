@@ -1,11 +1,12 @@
-// Scheda di registrazione di un comportamento (RF-G03, RF-G07).
-// Caso più frequente in 3 tocchi: comportamento → «Sì, eseguito» → «Salva»
-// (solleciti 0 e stellina accettata sono già proposti).
+// Scheda di dettaglio di un comportamento (RF-G03, RF-G07): si apre toccando il nome nella lista di Oggi.
+// Serve quando c'è qualcosa da annotare: solleciti, stellina rifiutata, dubbio, nota.
+// Il caso più frequente non passa da qui: basta la stellina accanto al nome, con la conferma.
+// Non c'è il «No»: se il comportamento non è stato fatto non si registra nulla.
 
 import { crea } from '../componenti/dom.js';
 import { sceltaPulsanti, interruttore, areaTesto, pulsante, sezione } from '../componenti/moduli.js';
 import { apriScheda } from '../componenti/finestre.js';
-import { sceltePronte } from '../../regole/oggi.js';
+import { sceltePredefinite } from '../../regole/oggi.js';
 import { percorsoIcona } from '../../risorse/icone-comportamenti.js';
 import { testi } from '../../testi/it.js';
 
@@ -13,16 +14,15 @@ const t = testi.oggi;
 
 // alSalvataggio(scelte) salva e chiude; alDefinizione(testo) salva la definizione mancante.
 export function apriSchedaRegistrazione({ comportamento: ca, suggerimenti, alSalvataggio, alDefinizione }) {
-  const scelte = { eseguito: null, solleciti: 0, stellinaAccettata: true, dubbio: false, nota: '' };
+  const scelte = sceltePredefinite();
   let definizioneScritta = '';
   let definizioneSalvata = false;
 
-  const salva = pulsante(t.salva, async () => {
-    if (!sceltePronte(scelte)) return;
+  const salva = pulsante(t.salvaConStellina, async () => {
     salva.disabled = true;
     scheda.chiudi();
     await alSalvataggio({ ...scelte });
-  }, { classe: 'primario', disattivo: true });
+  }, { classe: 'primario' });
 
   const scheda = apriScheda({
     titolo: ca.nome,
@@ -34,10 +34,15 @@ export function apriSchedaRegistrazione({ comportamento: ca, suggerimenti, alSal
     { valore: 'oltre', testo: t.oltre(ca.massimoSolleciti) },
   ];
 
+  // Il pulsante dice se la bambina riceve la stellina.
+  function aggiornaSalva() {
+    const conStellina = scelte.solleciti !== 'oltre' && scelte.stellinaAccettata;
+    salva.textContent = conStellina ? t.salvaConStellina : t.salvaSenzaStellina;
+  }
+
   function disegna() {
-    salva.disabled = !sceltePronte(scelte);
-    const eseguito = scelte.eseguito === true;
-    const valida = eseguito && scelte.solleciti !== 'oltre';
+    const valida = scelte.solleciti !== 'oltre';
+    aggiornaSalva();
     scheda.corpo.replaceChildren(...[
       crea('div', { class: 'testata-registrazione' }, [
         crea('img', { src: percorsoIcona(ca.icona ?? 'giochi'), alt: '', width: 64, height: 64 }),
@@ -45,36 +50,21 @@ export function apriSchedaRegistrazione({ comportamento: ca, suggerimenti, alSal
           ? crea('div', {}, [crea('span', { class: 'etichetta' }, t.cosaConta), crea('p', { class: 'nota' }, ca.definizione)])
           : null,
       ]),
-      sezione(t.eseguito, [
-        crea('div', { class: 'scelta-grande' }, [
-          crea('button', {
-            type: 'button', class: scelte.eseguito === true ? 'pulsante grande-scelta attivo' : 'pulsante grande-scelta',
-            'aria-pressed': String(scelte.eseguito === true),
-            onclick: () => { scelte.eseguito = true; disegna(); },
-          }, t.si),
-          crea('button', {
-            type: 'button', class: scelte.eseguito === false ? 'pulsante grande-scelta attivo' : 'pulsante grande-scelta',
-            'aria-pressed': String(scelte.eseguito === false),
-            onclick: () => { scelte.eseguito = false; disegna(); },
-          }, t.no),
-        ]),
+      crea('p', { class: 'nota' }, t.dettaglioSpiegazione),
+      sezione(t.solleciti, [
+        sceltaPulsanti({
+          etichetta: t.solleciti, valore: scelte.solleciti, opzioni: opzioniSolleciti, nascondiEtichetta: true,
+          spiegazione: (v) => (v === 'oltre' ? t.oltreSpiegazione : ''),
+          alCambio: (v) => { scelte.solleciti = v; disegna(); },
+        }),
       ]),
-      eseguito
-        ? sezione(t.solleciti, [
-          sceltaPulsanti({
-            etichetta: t.solleciti, valore: scelte.solleciti, opzioni: opzioniSolleciti, nascondiEtichetta: true,
-            spiegazione: (v) => (v === 'oltre' ? t.oltreSpiegazione : ''),
-            alCambio: (v) => { scelte.solleciti = v; disegna(); },
-          }),
-        ])
-        : null,
       valida
         ? sezione(t.stellina, [
           sceltaPulsanti({
             etichetta: t.stellina, valore: scelte.stellinaAccettata ? 'accettata' : 'rifiutata', nascondiEtichetta: true,
             opzioni: [{ valore: 'accettata', testo: t.accettata }, { valore: 'rifiutata', testo: t.rifiutata }],
             spiegazione: (v) => (v === 'rifiutata' ? t.rifiutataSpiegazione : ''),
-            alCambio: (v) => { scelte.stellinaAccettata = v === 'accettata'; },
+            alCambio: (v) => { scelte.stellinaAccettata = v === 'accettata'; aggiornaSalva(); },
           }),
         ])
         : null,

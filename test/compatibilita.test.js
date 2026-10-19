@@ -134,7 +134,7 @@ for (const fotografia of fotografie.filter((f) => f.avviata?.registrazioni)) {
     });
     for (const r of registrazioni) {
       for (const campo of Object.keys(modello.registrazione)) assert.ok(campo in r, `${r.id}: manca ${campo}`);
-      assert.ok(['da fare', 'automatico', 'eseguito', 'non eseguito', 'rifiutata'].includes(statoInOggi('previsto', r)));
+      assert.ok(['da fare', 'automatico', 'eseguito', 'oltre', 'non eseguito', 'rifiutata'].includes(statoInOggi('previsto', r)));
     }
     for (const m of movimentiStelline) {
       for (const campo of ['id', 'giorno', 'tipo', 'quantita', 'origine']) assert.ok(campo in m, `movimento ${m.id}: manca ${campo}`);

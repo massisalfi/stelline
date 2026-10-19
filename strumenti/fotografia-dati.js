@@ -55,7 +55,8 @@ const completa = structuredClone(bozza);
 completa.passo = 11;
 const { versione, inizio } = avvioSettimana0(completa, new Date(2026, 9, 19, 20, 0).getTime());
 
-// Alcune registrazioni della settimana 0 (dalla 0.6.0): un caso valido, uno rifiutato, uno non eseguito con dubbio.
+// Alcune registrazioni della settimana 0: un caso valido, uno rifiutato, uno oltre i solleciti con dubbio.
+// Fino alla 0.6.0 il terzo era un «non eseguito»: dalla 0.7.0 il «No» non c'è più (RF-G03).
 const conf = versione.contenuto;
 const registra = (id, ca, scelte) => nuovaRegistrazione({
   id, comportamento: ca, calendario: conf.calendario, scelte, genitore: 'genitore-1',
@@ -64,7 +65,7 @@ const registra = (id, ca, scelte) => nuovaRegistrazione({
 const registrazioni = [
   registra('reg-1', conf.comportamenti[0], { eseguito: true, solleciti: 0, stellinaAccettata: true }),
   registra('reg-2', conf.comportamenti[2], { eseguito: true, solleciti: 1, stellinaAccettata: false }),
-  registra('reg-3', conf.comportamenti[1], { eseguito: false, dubbio: true, nota: 'nota inventata' }),
+  registra('reg-3', conf.comportamenti[1], { eseguito: true, solleciti: 'oltre', dubbio: true, nota: 'nota inventata' }),
 ];
 
 const fotografia = {

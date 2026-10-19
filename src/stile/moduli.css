@@ -477,8 +477,6 @@ body.bloccato { overflow: hidden; }
 .scheda-pin { width: min(440px, 100%); align-items: center; }
 .titolo-pin { text-align: center; }
 .elenco-oggi { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.riga-oggi { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--bordo); }
-.riga-oggi-testo { display: flex; flex-direction: column; }
 .nota.sicurezza { text-align: center; }
 
 /* Passo 13: Oggi e registrazione */
@@ -486,48 +484,123 @@ body.bloccato { overflow: hidden; }
 .testata-elenco { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .testata-elenco h2 { margin: 0; }
 .elenco-oggi li { list-style: none; }
-button.riga-oggi {
+li.riga-oggi {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 8px 4px 0;
+  border: 1px solid var(--bordo);
+  border-radius: 14px;
+  background: var(--carta);
+}
+.riga-oggi-apri {
   width: 100%;
+  min-width: 0;
   display: grid;
   grid-template-columns: 44px 1fr auto;
   gap: 14px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 4px 8px 12px;
   min-height: 64px;
-  border: 1px solid var(--bordo);
-  border-radius: 14px;
-  background: var(--carta);
+  border: 0;
+  border-radius: 12px;
+  background: none;
   font: inherit;
   color: var(--testo);
   text-align: left;
   cursor: pointer;
 }
+.riga-oggi-testo { display: flex; flex-direction: column; min-width: 0; }
+
+/* La stellina accanto a ogni comportamento (RF-G03): grande, per il dito della bambina */
+.stella { display: block; width: 100%; height: 100%; overflow: visible; }
+.stella polygon { fill: var(--stella); stroke: #d99a1a; stroke-width: 7; stroke-linejoin: round; }
+.stella.vuota polygon { fill: #fffaf0; stroke: #e0b44e; stroke-width: 6; }
+.stella.automatica { opacity: .5; }
+.stella.spenta polygon { fill: none; stroke: var(--bordo); stroke-dasharray: 9 7; }
+.stella-registra, .stella-riga {
+  width: 72px;
+  height: 72px;
+  padding: 8px;
+  flex: none;
+}
+.stella-registra {
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+.stella-registra:active .stella { transform: scale(.88); }
+.stella-registra .stella { transition: transform 120ms ease-out; }
+.per-domani { margin: 0; font-weight: 600; color: #8a6a1a; }
 .distintivo-stato { font-size: 0.85rem; font-weight: 600; border-radius: 999px; padding: 4px 12px; background: var(--sfondo); color: var(--tenue); white-space: nowrap; }
 .stato-eseguito .distintivo-stato { background: #dfeee9; color: var(--ok); }
 .stato-rifiutata .distintivo-stato { background: #fbf3df; color: #8a5a00; }
 .stato-non-eseguito .distintivo-stato { background: #eef0f2; color: var(--tenue); }
 .stato-automatico .distintivo-stato { background: #e7e0f3; color: #5b4690; }
-.stato-da-fare { border-color: var(--accento); }
-.stato-da-fare .distintivo-stato { background: var(--accento); color: var(--accento-testo); }
+.stato-da-fare { border-color: #e0b44e; }
 .testata-registrazione { display: flex; gap: 16px; align-items: flex-start; }
 .scelta-grande { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .pulsante.grande-scelta { min-height: 72px; font-size: 1.25rem; }
 .pulsante.grande-scelta.attivo { background: var(--accento); border-color: var(--accento); color: var(--accento-testo); }
 .suggerimenti { display: flex; flex-direction: column; gap: 6px; }
 .proposta-definizione { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; background: #fbf3df; }
-.barra-annulla {
+/* Festa della stellina (RF-G04): sopra ogni altra finestra */
+.festa {
   position: fixed;
-  left: 50%;
-  bottom: max(20px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  inset: 0;
+  z-index: 20;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 10px 12px 10px 20px;
-  border-radius: 16px;
-  background: var(--testo);
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
-  z-index: 8;
-  max-width: calc(100% - 32px);
+  justify-content: center;
+  gap: 28px;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 249, 228, .97), rgba(246, 241, 231, .94) 70%);
+  animation: festa-entra 180ms ease-out both;
+  transition: opacity 300ms ease-in;
+  cursor: pointer;
+}
+.festa.esce { opacity: 0; }
+.festa-stelline { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 100%; }
+.festa-stella {
+  position: relative;
+  width: clamp(120px, 30vmin, 260px);
+  aspect-ratio: 1;
+  animation: stella-entra 720ms cubic-bezier(.2, 1.5, .4, 1) var(--ritardo) both;
+}
+.festa-stella > .stella:not(.scintilla) {
+  filter: drop-shadow(0 8px 14px rgba(184, 134, 11, .35));
+  animation: stella-brilla 900ms ease-in-out calc(var(--ritardo) + 720ms) infinite alternate;
+}
+.festa-stella > .scintilla {
+  position: absolute;
+  left: 36%;
+  top: 36%;
+  width: 28%;
+  height: 28%;
+  opacity: 0;
+  animation: scintilla 1000ms ease-out calc(var(--ritardo) + 180ms) both;
+}
+.stella.scintilla polygon { fill: #ffd95a; stroke: #f0b429; stroke-width: 5; }
+.festa-etichetta { margin: 0; font-size: 1.3rem; font-weight: 600; color: #8a6a1a; }
+@keyframes festa-entra { from { opacity: 0; } to { opacity: 1; } }
+@keyframes stella-entra {
+  0% { opacity: 0; transform: scale(0) rotate(-140deg); }
+  60% { opacity: 1; transform: scale(1.18) rotate(12deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes stella-brilla { from { transform: scale(1); } to { transform: scale(1.06); } }
+@keyframes scintilla {
+  0% { opacity: 0; transform: rotate(var(--angolo)) translateY(0) scale(.4); }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--angolo)) translateY(-290%) scale(.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .festa-stella { animation: festa-entra 300ms ease-out var(--ritardo) both; }
+  .festa-stella > .stella:not(.scintilla) { animation: none; }
+  .festa-stella > .scintilla { display: none; }
 }

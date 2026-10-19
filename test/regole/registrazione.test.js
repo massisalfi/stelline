@@ -2,7 +2,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { valida, effetti, annullabile, visibileAllaBambina } from '../../src/regole/registrazione.js';
+import { valida, effetti } from '../../src/regole/registrazione.js';
 
 const ca = { massimoSolleciti: 3, stelline: 1 };
 const reg = (campi) => ({ eseguito: true, solleciti: 0, stellinaAccettata: true, ...campi });
@@ -46,22 +46,4 @@ test('RN-04: il rifiuto non rende valida una registrazione non valida', () => {
 
 test('RN-03: niente frazioni di stellina', () => {
   assert.throws(() => effetti(reg({}), { massimoSolleciti: 3, stelline: 0.5 }));
-});
-
-test('RF-G03: Annulla disponibile per 10 secondi, poi non più', () => {
-  const r = { quando: 1_000_000 };
-  assert.equal(annullabile(r, 1_000_000), true);
-  assert.equal(annullabile(r, 1_010_000), true);
-  assert.equal(annullabile(r, 1_010_001), false);
-});
-
-test('RF-G04: la bambina vede la stellina solo dopo i 10 secondi dell\'Annulla', () => {
-  const r = { quando: 1_000_000 };
-  assert.equal(visibileAllaBambina(r, 1_005_000), false);
-  assert.equal(visibileAllaBambina(r, 1_010_000), false);
-  assert.equal(visibileAllaBambina(r, 1_010_001), true);
-  // Mai entrambe vere: quando la bambina la vede, non si può più annullare.
-  for (let t = 1_000_000; t < 1_020_000; t += 500) {
-    assert.equal(annullabile(r, t) && visibileAllaBambina(r, t), false);
-  }
 });

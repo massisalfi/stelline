@@ -11,19 +11,19 @@ import { accreditoDaRegistrazione } from './portafoglio.js';
 import { stellineNelGiorno } from './giorno.js';
 
 // Stato di un comportamento nella lista di Oggi (RF-G02).
-//   'automatico' · 'da fare' · 'eseguito' · 'non eseguito' · 'rifiutata'
+//   'automatico' · 'da fare' · 'eseguito' · 'rifiutata' · 'oltre' (oltre i solleciti) · 'non eseguito'
+// Dalla 0.7.0 non si registra più il «non eseguito»: senza stellina vale come non fatto.
+// 'non eseguito' resta per le registrazioni salvate fino alla 0.6.0.
 export function statoInOggi(statoGiorno, registrazione) {
   if (!registrazione) return statoGiorno === 'automatico' ? 'automatico' : 'da fare';
-  if (!registrazione.valida) return 'non eseguito';
+  if (!registrazione.valida) return registrazione.eseguito ? 'oltre' : 'non eseguito';
   return registrazione.stellinaAccettata === false ? 'rifiutata' : 'eseguito';
 }
 
-// Le scelte del genitore bastano per salvare? (RF-G03)
-// Eseguito o no è obbligatorio; se eseguito servono anche i solleciti (0 è già proposto).
-export function sceltePronte(scelte) {
-  if (scelte.eseguito === false) return true;
-  if (scelte.eseguito !== true) return false;
-  return Number.isInteger(scelte.solleciti) || scelte.solleciti === 'oltre';
+// Scelte della stellina rapida (RF-G03): eseguito, nessun sollecito, stellina accettata.
+// La scheda di dettaglio parte dalle stesse scelte.
+export function sceltePredefinite() {
+  return { eseguito: true, solleciti: 0, stellinaAccettata: true, dubbio: false, nota: '' };
 }
 
 // Costruisce la registrazione e i movimenti che ne derivano, pronti per l'archivio.

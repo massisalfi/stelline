@@ -1,20 +1,25 @@
-// Area genitori: schermata Oggi (RF-G02) con la registrazione rapida (RF-G03).
-// In alto il portafoglio di oggi e i minuti di schermo già riscattati; poi i comportamenti
-// del giorno in ordine di momento, ciascuno con il suo stato. «Ieri» serve per le registrazioni in ritardo.
+// Area genitori: schermata Oggi (RF-G02) con la registrazione (RF-G03, RF-G04).
+// In alto il portafoglio di oggi (e le stelline già guadagnate per domani) e i minuti di schermo
+// già riscattati; poi i comportamenti del giorno in ordine di momento.
+// Accanto a ogni comportamento da registrare c'è la stellina: un tocco, la conferma, la festa.
+// Toccando il nome si apre la scheda di dettaglio (solleciti, rifiuto, dubbio, nota).
+// «Ieri» serve per le registrazioni in ritardo.
 
 import { crea } from '../componenti/dom.js';
 import { pulsante, sceltaPulsanti, sezione } from '../componenti/moduli.js';
-import { apriScheda } from '../componenti/finestre.js';
+import { apriScheda, chiediConferma } from '../componenti/finestre.js';
+import { disegnoStella } from '../componenti/stella.js';
+import { preparaSuoni } from '../componenti/suoni.js';
+import { festeggia } from '../componenti/festa.js';
 import { apriSchedaRegistrazione } from './scheda-registrazione.js';
 import { comportamentiDelGiorno, stellineNelGiorno } from '../../regole/giorno.js';
-import { statoInOggi, nuovaRegistrazione, minutiPerCategoria } from '../../regole/oggi.js';
+import { statoInOggi, sceltePredefinite, nuovaRegistrazione, minutiPerCategoria } from '../../regole/oggi.js';
 import { saldo } from '../../regole/portafoglio.js';
 import { minutiDelGiorno } from '../../regole/riscatto.js';
-import { giornoPrima } from '../../regole/date.js';
+import { giornoPrima, giornoDopo } from '../../regole/date.js';
 import { versioneDelGiorno, ultimaVersione } from '../../regole/versioni.js';
-import { annullabile, SECONDI_ANNULLA } from '../../regole/registrazione.js';
 import { caricaConfigurazione, salvaNuovaVersione } from '../../dati/configurazione.js';
-import { datiDelGiorno, salvaRegistrazione, annullaRegistrazione } from '../../dati/registro.js';
+import { datiDelGiorno, salvaRegistrazione } from '../../dati/registro.js';
 import { percorsoIcona } from '../../risorse/icone-comportamenti.js';
 import { testi } from '../../testi/it.js';
 
@@ -31,25 +36,32 @@ function ora(istante) {
   return new Date(istante).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 }
 
+const stelle = (n) => `${'★'.repeat(Math.min(n, 20))} ${n}`;
+
 // Crea la schermata e la ridisegna da sola dopo ogni registrazione.
 export async function creaAreaGenitori({ archivio, genitore, inizio, alUscita, adesso = () => Date.now() }) {
   const schermo = crea('main', { class: 'schermo area-genitori' });
-  const avvisoAnnulla = crea('div', { class: 'barra-annulla', hidden: true, role: 'status' });
   let vista = 'oggi';
-  let conto = null;
+  let registrazioneInCorso = false;
 
   async function disegna() {
     const { oggi, versioni } = await caricaConfigurazione(archivio, adesso());
     const giorno = vista === 'oggi' ? oggi : giornoPrima(oggi);
     const versione = versioneDelGiorno(giorno, versioni);
     const configurazione = versione?.contenuto ?? null;
-    const genitori = ultimaVersione(versioni)?.contenuto.genitori ?? [];
+    const ultima = ultimaVersione(versioni)?.contenuto;
+    const genitori = ultima?.genitori ?? [];
     const delGiorno = await datiDelGiorno(archivio, giorno);
     const diOggi = vista === 'oggi' ? delGiorno : await datiDelGiorno(archivio, oggi);
+    const domani = giornoDopo(oggi);
     const stelline = saldo(oggi, diOggi.movimenti);
-    const minuti = configurazione
-      ? minutiPerCategoria(configurazione.economia.categorie, minutiDelGiorno(oggi, diOggi.riscatti))
+    const perDomani = saldo(domani, (await datiDelGiorno(archivio, domani)).movimenti);
+    const configurazioneOggi = versioneDelGiorno(oggi, versioni)?.contenuto;
+    const minuti = configurazioneOggi
+      ? minutiPerCategoria(configurazioneOggi.economia.categorie, minutiDelGiorno(oggi, diOggi.riscatti))
       : [];
+    // Suoni e volume seguono l'ultima configurazione salvata (passo 2).
+    const suoni = ultima?.giocatrice?.suoni;
 
     const voci = configurazione
       ? comportamentiDelGiorno(configurazione.comportamenti, giorno, configurazione.calendario)
@@ -58,28 +70,37 @@ export async function creaAreaGenitori({ archivio, genitore, inizio, alUscita, a
       const registrazione = delGiorno.registrazioni.find((r) => r.comportamento === ca.id);
       const statoOggi = statoInOggi(stato, registrazione);
       const valore = stellineNelGiorno(ca, giorno, configurazione.calendario);
-      return crea('li', {}, crea('button', {
-        type: 'button',
-        class: `riga-oggi stato-${statoOggi.replace(' ', '-')}`,
-        onclick: () => apri(ca, stato, registrazione, { giorno, oggi, configurazione, versione, genitori }),
-      }, [
-        crea('img', { src: percorsoIcona(ca.icona ?? 'giochi'), alt: '', width: 44, height: 44 }),
-        crea('span', { class: 'riga-oggi-testo' }, [
-          crea('strong', {}, ca.nome),
-          crea('span', { class: 'nota' }, `${tc.momenti[ca.momento]} · ${t.valore(valore)}`),
+      const contesto = { giorno, oggi, configurazione, versione, genitori, suoni };
+      const dettagli = [tc.momenti[ca.momento], t.valore(valore), ca.validita === 'domani' ? t.valeDomani : null];
+      return crea('li', { class: `riga-oggi stato-${statoOggi.replace(' ', '-')}` }, [
+        crea('button', {
+          type: 'button',
+          class: 'riga-oggi-apri',
+          onclick: () => apri(ca, stato, registrazione, contesto),
+        }, [
+          crea('img', { src: percorsoIcona(ca.icona ?? 'giochi'), alt: '', width: 44, height: 44 }),
+          crea('span', { class: 'riga-oggi-testo' }, [
+            crea('strong', {}, ca.nome),
+            crea('span', { class: 'nota' }, dettagli.filter(Boolean).join(' · ')),
+          ]),
+          t.stati[statoOggi] ? crea('span', { class: 'distintivo-stato' }, t.stati[statoOggi]) : null,
         ]),
-        crea('span', { class: 'distintivo-stato' }, t.stati[statoOggi]),
-      ]));
+        stellaDellaRiga(ca, statoOggi, contesto),
+      ]);
     });
+
+    // Ieri senza configurazione: la settimana 0 è iniziata oggi.
+    const vuoto = vista === 'ieri' && !configurazione ? t.ieriPrimaDellInizio : t.nessuno;
 
     schermo.replaceChildren(...[
       crea('header', { class: 'testata-genitori' }, [
         crea('div', {}, [crea('p', { class: 'sopratitolo' }, tg.titolo), crea('h1', {}, tg.ciao(genitore.nome))]),
-        pulsante(tg.esci, () => { fermaAnnulla(); alUscita(); }),
+        pulsante(tg.esci, () => alUscita()),
       ]),
       crea('div', { class: 'griglia-due' }, [
         sezione(t.portafoglio, [
-          crea('p', { class: 'portafoglio' }, stelline > 0 ? `${'★'.repeat(Math.min(stelline, 20))} ${stelline}` : t.nessunaStellina),
+          crea('p', { class: 'portafoglio' }, stelline > 0 ? stelle(stelline) : t.nessunaStellina),
+          perDomani > 0 ? crea('p', { class: 'per-domani' }, t.perDomani(stelle(perDomani))) : null,
           ...minuti.map((m) => crea('p', { class: 'nota' }, `${m.nome}: ${t.minuti(m.usati, m.limite)}`)),
         ]),
         sezione(tg.settimana0, [
@@ -96,37 +117,83 @@ export async function creaAreaGenitori({ archivio, genitore, inizio, alUscita, a
             alCambio: (v) => { vista = v; disegna(); },
           }),
         ]),
-        vista === 'ieri' ? crea('p', { class: 'nota' }, t.ieriSpiegazione) : null,
-        righe.length ? crea('ul', { class: 'elenco-oggi' }, righe) : crea('p', { class: 'nota' }, t.nessuno),
+        righe.length ? crea('p', { class: 'nota' }, vista === 'ieri' ? t.ieriSpiegazione : t.comeSiRegistra) : null,
+        righe.length ? crea('ul', { class: 'elenco-oggi' }, righe) : crea('p', { class: 'nota' }, vuoto),
       ]),
       crea('p', { class: 'nota sicurezza' }, tg.sicurezza),
-      avvisoAnnulla,
     ].filter(Boolean));
+  }
+
+  // Da registrare: stellina vuota da toccare. Data: stellina piena. Automatica: piena e più chiara.
+  // Rifiutata: solo il contorno. Oltre i solleciti: nessuna stellina.
+  function stellaDellaRiga(ca, statoOggi, contesto) {
+    if (statoOggi === 'da fare') {
+      return crea('button', {
+        type: 'button',
+        class: 'stella-registra',
+        'aria-label': t.daiStellina(ca.nome),
+        onclick: () => {
+          preparaSuoni(); // dentro il tocco: Safari suona solo così
+          registraStellina(ca, contesto);
+        },
+      }, disegnoStella('vuota'));
+    }
+    const classe = { eseguito: '', automatico: 'automatica', rifiutata: 'vuota spenta' }[statoOggi];
+    return crea('span', { class: 'stella-riga' }, classe === undefined ? [] : disegnoStella(classe));
+  }
+
+  async function registraStellina(ca, contesto) {
+    const avviso = contesto.giorno !== contesto.oggi ? t.conferma.ieri : ca.validita === 'domani' ? t.conferma.domani : null;
+    const confermata = await chiediConferma({
+      domanda: t.conferma.domanda(ca.nome),
+      spiegazione: [t.conferma.spiegazione, avviso].filter(Boolean).join(' '),
+      si: t.conferma.si,
+      no: testi.comune.annulla,
+    });
+    if (confermata) await registra(ca, contesto, sceltePredefinite());
+  }
+
+  // Salva la registrazione; se la bambina riceve stelline, festa con animazione e suono (RF-G04).
+  async function registra(ca, contesto, scelte) {
+    if (registrazioneInCorso) return;
+    registrazioneInCorso = true;
+    try {
+      const { registrazioni } = await datiDelGiorno(archivio, contesto.giorno);
+      if (registrazioni.some((r) => r.comportamento === ca.id)) return; // già registrato (doppio tocco)
+      const dati = nuovaRegistrazione({
+        id: crypto.randomUUID(),
+        comportamento: ca,
+        calendario: contesto.configurazione.calendario,
+        scelte,
+        genitore: genitore.id,
+        giorno: contesto.giorno,
+        giornoRegistrazione: contesto.oggi,
+        quando: adesso(),
+        versione: contesto.versione.numero,
+      });
+      await salvaRegistrazione(archivio, dati);
+      const festa = dati.registrazione.stelline > 0
+        ? festeggia({
+          stelline: dati.registrazione.stelline,
+          suoni: contesto.suoni,
+          etichetta: dati.movimenti[0]?.giorno > contesto.oggi ? t.festaDomani : null,
+        })
+        : null;
+      await disegna();
+      await festa;
+    } finally {
+      registrazioneInCorso = false;
+    }
   }
 
   function apri(ca, stato, registrazione, contesto) {
     if (registrazione) return mostraRegistrazione(ca, registrazione, contesto.genitori);
     if (stato === 'automatico') return mostraInfo(ca.nome, t.automaticoSpiegazione);
+    preparaSuoni();
     apriSchedaRegistrazione({
       comportamento: ca,
       suggerimenti: contesto.configurazione.suggerimentiDubbio,
-      alSalvataggio: async (scelte) => {
-        const quando = adesso();
-        const dati = nuovaRegistrazione({
-          id: crypto.randomUUID(),
-          comportamento: ca,
-          calendario: contesto.configurazione.calendario,
-          scelte,
-          genitore: genitore.id,
-          giorno: contesto.giorno,
-          giornoRegistrazione: contesto.oggi,
-          quando,
-          versione: contesto.versione.numero,
-        });
-        await salvaRegistrazione(archivio, dati);
-        await disegna();
-        offriAnnulla(ca.nome, dati);
-      },
+      alSalvataggio: (scelte) => registra(ca, contesto, scelte),
       // RF-G07: la definizione scritta durante un dubbio entra in una nuova versione, valida da domani.
       alDefinizione: async (testo) => {
         const { versioni } = await caricaConfigurazione(archivio, adesso());
@@ -136,47 +203,6 @@ export async function creaAreaGenitori({ archivio, genitore, inizio, alUscita, a
         await salvaNuovaVersione(archivio, contenuto, genitore.nome, adesso());
       },
     });
-  }
-
-  // Annulla per 10 secondi dopo il salvataggio (RF-G03): poi la registrazione resta.
-  function offriAnnulla(nome, dati) {
-    fermaAnnulla();
-    const aggiorna = () => {
-      if (!schermo.isConnected) {
-        fermaAnnulla();
-        return;
-      }
-      const rimasti = Math.ceil((dati.registrazione.quando + SECONDI_ANNULLA * 1000 - adesso()) / 1000);
-      if (!annullabile(dati.registrazione, adesso()) || rimasti <= 0) {
-        fermaAnnulla();
-        return;
-      }
-      avvisoAnnulla.replaceChildren(
-        crea('span', {}, t.registrato(nome)),
-        pulsante(t.annulla(rimasti), async () => {
-          if (!annullabile(dati.registrazione, adesso())) return;
-          fermaAnnulla();
-          await annullaRegistrazione(archivio, dati);
-          await disegna();
-          mostraBreve(t.annullato);
-        }, { classe: 'primario' }),
-      );
-      avvisoAnnulla.hidden = false;
-    };
-    aggiorna();
-    conto = setInterval(aggiorna, 250);
-  }
-
-  function fermaAnnulla() {
-    clearInterval(conto);
-    conto = null;
-    avvisoAnnulla.hidden = true;
-  }
-
-  function mostraBreve(testo) {
-    avvisoAnnulla.replaceChildren(crea('span', {}, testo));
-    avvisoAnnulla.hidden = false;
-    setTimeout(() => { if (!conto) avvisoAnnulla.hidden = true; }, 2500);
   }
 
   function mostraInfo(titolo, testo) {

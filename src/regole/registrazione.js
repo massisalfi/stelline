@@ -1,11 +1,9 @@
-// RN-03 Validità e RN-04 Rifiuto, più le regole di Annulla e correzioni (RF-G03, RF-G05).
+// RN-03 Validità e RN-04 Rifiuto.
 //
 // Registrazione: {
 //   id, comportamento, giorno (di competenza), quando (istante, ms), giornoRegistrazione,
 //   genitore, eseguito, solleciti (numero, oppure 'oltre'), stellinaAccettata, dubbio, nota
 // }
-
-export const SECONDI_ANNULLA = 10;
 
 // RN-03: valida se il CA è eseguito con solleciti ≤ massimo del CA.
 export function valida(registrazione, massimoSolleciti) {
@@ -33,15 +31,4 @@ export function effetti(registrazione, { massimoSolleciti, stelline }) {
     puntiEsperienza: stelline,
     eseguito: true,
   };
-}
-
-// RF-G03: l'Annulla resta disponibile per 10 secondi dal salvataggio.
-export function annullabile(registrazione, adesso) {
-  const trascorsi = adesso - registrazione.quando;
-  return trascorsi >= 0 && trascorsi <= SECONDI_ANNULLA * 1000;
-}
-
-// RF-G04: animazione e voce per la bambina solo quando l'Annulla non è più possibile.
-export function visibileAllaBambina(registrazione, adesso) {
-  return adesso - registrazione.quando > SECONDI_ANNULLA * 1000;
 }

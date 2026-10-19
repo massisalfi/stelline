@@ -38,10 +38,13 @@ test('ogni file elencato nel service worker esiste', () => {
   assert.deepEqual(inesistenti, []);
 });
 
+// L'unica eccezione è il nome del formato SVG: si scrive come un indirizzo ma non viene mai aperto.
+const NOME_SVG = "'http://www.w3.org/2000/svg'";
+
 test('nessun file dell\'app richiama indirizzi esterni', () => {
   const testuali = [...FILE_APP, 'sw.js'].filter((f) => /\.(html|js|css|webmanifest|json)$/.test(f));
   const trovati = testuali.flatMap((f) => {
-    const contenuto = readFileSync(join(RADICE, f), 'utf8');
+    const contenuto = readFileSync(join(RADICE, f), 'utf8').replaceAll(NOME_SVG, '');
     return [...contenuto.matchAll(/(?:https?:)?\/\/[a-z0-9-]+\.[a-z0-9.-]+/gi)]
       .map((m) => `${f}: ${m[0]}`);
   });

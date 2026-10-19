@@ -34,12 +34,3 @@ export async function salvaRegistrazione(archivio, { registrazione, movimenti, p
     ...punti.map((record) => ({ contenitore: 'movimentiPunti', record })),
   ]);
 }
-
-// Annulla dei primi 10 secondi (RF-G03): la registrazione sparisce del tutto, senza lasciare traccia.
-export async function annullaRegistrazione(archivio, { registrazione, movimenti, punti }) {
-  await archivio.scriviInsieme([
-    { contenitore: 'registrazioni', elimina: registrazione.id },
-    ...movimenti.map((m) => ({ contenitore: 'movimentiStelline', elimina: m.id })),
-    ...punti.map((p) => ({ contenitore: 'movimentiPunti', elimina: p.id })),
-  ]);
-}

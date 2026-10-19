@@ -2,7 +2,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { statoInOggi, sceltePronte, nuovaRegistrazione } from '../src/regole/oggi.js';
+import { statoInOggi, sceltePredefinite, nuovaRegistrazione } from '../src/regole/oggi.js';
 import { saldo } from '../src/regole/portafoglio.js';
 import { calendario, pastelli, scarpe, pesce, LUNEDI, MARTEDI } from './esempi.js';
 
@@ -13,22 +13,25 @@ test('RF-G02: stato di ogni comportamento nella lista di Oggi', () => {
   assert.equal(statoInOggi('automatico', null), 'automatico');
   assert.equal(statoInOggi('previsto', { valida: true, stellinaAccettata: true }), 'eseguito');
   assert.equal(statoInOggi('previsto', { valida: true, stellinaAccettata: false }), 'rifiutata');
-  assert.equal(statoInOggi('previsto', { valida: false }), 'non eseguito');
+  assert.equal(statoInOggi('previsto', { valida: false, eseguito: true, solleciti: 'oltre' }), 'oltre');
+  // Registrazioni «No» salvate fino alla 0.6.0.
+  assert.equal(statoInOggi('previsto', { valida: false, eseguito: false }), 'non eseguito');
 });
 
-test('RF-G03: si salva solo dopo aver detto se è stato eseguito', () => {
-  assert.equal(sceltePronte({}), false);
-  assert.equal(sceltePronte({ eseguito: false }), true);
-  assert.equal(sceltePronte({ eseguito: true, solleciti: 0 }), true);
-  assert.equal(sceltePronte({ eseguito: true, solleciti: 'oltre' }), true);
-  assert.equal(sceltePronte({ eseguito: true }), false);
+test('RF-G03: la stellina rapida registra eseguito, nessun sollecito, stellina accettata', () => {
+  assert.deepEqual(sceltePredefinite(), { eseguito: true, solleciti: 0, stellinaAccettata: true, dubbio: false, nota: '' });
+  // Ogni volta scelte nuove: la scheda di dettaglio può modificarle senza toccare le successive.
+  const prime = sceltePredefinite();
+  prime.solleciti = 2;
+  assert.equal(sceltePredefinite().solleciti, 0);
 });
 
-test('CT-19: caso più frequente (eseguito, 0 solleciti, accettata) → stelline e punti', () => {
+test('CT-19: caso più frequente (stellina e conferma) → stelline e punti', () => {
   const { registrazione, movimenti, punti } = nuovaRegistrazione({
     ...base, id: 'r1', comportamento: pesce, giorno: LUNEDI, giornoRegistrazione: LUNEDI,
-    scelte: { eseguito: true, solleciti: 0, stellinaAccettata: true },
+    scelte: sceltePredefinite(),
   });
+  assert.equal(statoInOggi('previsto', registrazione), 'eseguito');
   assert.equal(registrazione.valida, true);
   assert.equal(registrazione.stelline, 2);
   assert.equal(registrazione.punti, 2);
@@ -61,10 +64,11 @@ test('CT-08 dalla registrazione: oltre i solleciti → niente stelline, niente p
     scelte: { eseguito: true, solleciti: 'oltre', stellinaAccettata: true },
   });
   assert.equal(registrazione.valida, false);
+  assert.equal(statoInOggi('previsto', registrazione), 'oltre');
   assert.deepEqual([movimenti, punti], [[], []]);
 });
 
-test('non eseguito: registrazione salvata senza solleciti né stelline', () => {
+test('non eseguito (registrazioni fino alla 0.6.0): salvata senza solleciti né stelline', () => {
   const { registrazione, movimenti } = nuovaRegistrazione({
     ...base, id: 'r5', comportamento: pastelli, giorno: LUNEDI, giornoRegistrazione: LUNEDI,
     scelte: { eseguito: false, solleciti: 2, dubbio: true, nota: '  ha iniziato tardi  ' },
